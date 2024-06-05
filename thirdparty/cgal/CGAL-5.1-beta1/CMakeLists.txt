@@ -460,6 +460,14 @@ if( MSVC )
 
 endif()
 
+if( "\"${CMAKE_CXX_COMPILER_ID}\"" MATCHES "Clang" )
+  message( STATUS "Using Clang compiler, adding -fdeclspec." )
+  
+  uniquely_add_flags( CGAL_CXX_FLAGS "-fdeclspec" )
+  uniquely_add_flags( CGAL_SHARED_LINKER_FLAGS "-fdeclspec" )
+  uniquely_add_flags( CGAL_EXE_LINKER_FLAGS    "-fdeclspec" )
+endif()
+
 if( "\"${CMAKE_CXX_COMPILER_ID}\"" MATCHES "SunPro" )
   message( STATUS "Using SunPro compiler, using STLPort 4." )
 

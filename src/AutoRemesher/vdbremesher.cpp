@@ -31,9 +31,6 @@
 #include <openvdb/tools/MultiResGrid.h>
 #include <openvdb/tools/Interpolation.h>
 #include <openvdb/tools/LevelSetUtil.h>
-#if AUTO_REMESHER_DEBUG
-#include <QDebug>
-#endif
 
 namespace AutoRemesher
 {

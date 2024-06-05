@@ -1,12 +1,10 @@
-QT += core widgets opengl network
-win32 {
-    QT += winextras
-}
+QMAKE_APPLE_DEVICE_ARCHS=x86_64
+
+CONFIG -= qt
 CONFIG += release
 CONFIG(release, debug|release) DEFINES += NDEBUG
 DEFINES += AUTO_REMESHER_DEBUG
 DEFINES += QT_MESSAGELOGCONTEXT
-RESOURCES += resources.qrc
 
 CONFIG += object_parallel_to_source
 
@@ -17,15 +15,6 @@ CONFIG(release, debug|release) MOC_DIR=moc
 
 win32 {
     CONFIG(debug, debug|release) CONFIG += force_debug_info
-	RC_FILE = autoremesher.rc
-}
-
-macx {
-	ICON = autoremesher.icns
-
-	RESOURCE_FILES.files = $$ICON
-	RESOURCE_FILES.path = Contents/Resources
-	QMAKE_BUNDLE_DATA += RESOURCE_FILES
 }
 
 isEmpty(HUMAN_VERSION) {
@@ -93,81 +82,12 @@ win32 {
 DEFINES += _USE_MATH_DEFINES
 DEFINES += NOMINMAX
 
-include(thirdparty/QtAwesome/QtAwesome/QtAwesome.pri)
-
-INCLUDEPATH += thirdparty/QtWaitingSpinner
-
-SOURCES += thirdparty/QtWaitingSpinner/waitingspinnerwidget.cpp
-HEADERS += thirdparty/QtWaitingSpinner/waitingspinnerwidget.h
-
 INCLUDEPATH += thirdparty/libigl/include
 INCLUDEPATH += thirdparty/eigen
 
 INCLUDEPATH += include
 
 SOURCES += src/main.cpp
-
-SOURCES += src/logbrowser.cpp
-HEADERS += src/logbrowser.h
-
-SOURCES += src/logbrowserdialog.cpp
-HEADERS += src/logbrowserdialog.h
-
-SOURCES += src/spinnableawesomebutton.cpp
-HEADERS += src/spinnableawesomebutton.h
-
-SOURCES += src/util.cpp
-HEADERS += src/util.h
-
-SOURCES += src/updateschecker.cpp
-HEADERS += src/updateschecker.h
-
-SOURCES += src/mainwindow.cpp
-HEADERS += src/mainwindow.h
-
-SOURCES += src/aboutwidget.cpp
-HEADERS += src/aboutwidget.h
-
-SOURCES += src/theme.cpp
-HEADERS += src/theme.h
-
-SOURCES += src/graphicscontainerwidget.cpp
-HEADERS += src/graphicscontainerwidget.h
-
-SOURCES += src/graphicswidget.cpp
-HEADERS += src/graphicswidget.h
-
-SOURCES += src/updatescheckwidget.cpp
-HEADERS += src/updatescheckwidget.h
-
-SOURCES += src/pbrshadermesh.cpp
-HEADERS += src/pbrshadermesh.h
-
-SOURCES += src/pbrshadermeshbinder.cpp
-HEADERS += src/pbrshadermeshbinder.h
-
-SOURCES += src/pbrshaderprogram.cpp
-HEADERS += src/pbrshaderprogram.h
-
-HEADERS += src/pbrshadervertex.h
-
-SOURCES += src/pbrshaderwidget.cpp
-HEADERS += src/pbrshaderwidget.h
-
-SOURCES += src/rendermeshgenerator.cpp
-HEADERS += src/rendermeshgenerator.h
-
-SOURCES += src/quadmeshgenerator.cpp
-HEADERS += src/quadmeshgenerator.h
-
-SOURCES += src/ddsfile.cpp
-HEADERS += src/ddsfile.h
-
-SOURCES += src/preferences.cpp
-HEADERS += src/preferences.h
-
-SOURCES += src/floatnumberwidget.cpp
-HEADERS += src/floatnumberwidget.h
 
 SOURCES += src/AutoRemesher/autoremesher.cpp
 HEADERS += src/AutoRemesher/autoremesher.h
@@ -467,7 +387,6 @@ win32 {
 
 win32 {
     LIBS += -luser32
-	LIBS += -lopengl32
 
 	isEmpty(BOOST_INCLUDEDIR) {
 		BOOST_INCLUDEDIR = $$(BOOST_INCLUDEDIR)
@@ -496,12 +415,12 @@ win32 {
 macx {
 	GMP_LIBNAME = gmp
 	MPFR_LIBNAME = mpfr
-	BOOST_INCLUDEDIR = /usr/local/opt/boost/include
-	CGAL_INCLUDEDIR = /usr/local/opt/cgal/include
-	GMP_INCLUDEDIR = /usr/local/opt/gmp/include
-	GMP_LIBDIR = /usr/local/opt/gmp/lib
-	MPFR_INCLUDEDIR = /usr/local/opt/mpfr/include
-	MPFR_LIBDIR = /usr/local/opt/mpfr/lib
+	BOOST_INCLUDEDIR = /usr/local/include
+	CGAL_INCLUDEDIR = /usr/local/include
+	GMP_INCLUDEDIR = /usr/local/include
+	GMP_LIBDIR = /usr/local/lib
+	MPFR_INCLUDEDIR = /usr/local/include
+	MPFR_LIBDIR = /usr/local/lib
 }
 
 unix:!macx {

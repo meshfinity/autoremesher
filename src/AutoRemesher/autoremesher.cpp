@@ -38,10 +38,6 @@ thread_local void *geogram_report_progress_tag;
 thread_local int geogram_report_progress_round;
 thread_local geogram_report_progress_handler geogram_report_progress_callback;
 
-#if AUTO_REMESHER_DEBUG
-#include <QDebug>
-#endif
-
 namespace AutoRemesher
 {
     
@@ -70,7 +66,7 @@ void AutoRemesher::initializeVoxelSize()
     double triangleArea = area / m_targetTriangleCount;
     m_voxelSize = std::sqrt(triangleArea / (0.86602540378 * 0.5));
 #if AUTO_REMESHER_DEBUG
-    qDebug() << "Area:" << area << " voxelSize:" << m_voxelSize;
+    std::cout << "Area:" << area << " voxelSize:" << m_voxelSize;
 #endif
 }
 
@@ -94,7 +90,7 @@ static void ReportProgress(void *tag, float progress)
 {
     ReportProgressContext *context = (ReportProgressContext *)tag;
 #if AUTO_REMESHER_DEBUG
-    //qDebug() << "Island[" << context->islandIndex << "]: round(" << geogram_report_progress_round << ") progress(" << (100 * progress) << "%)";
+    //std::cout << "Island[" << context->islandIndex << "]: round(" << geogram_report_progress_round << ") progress(" << (100 * progress) << "%)";
 #endif
     context->autoRemesher->updateProgress(context->islandIndex, (float)geogram_report_progress_round / 8 + progress / 8);
 }
@@ -108,7 +104,7 @@ void AutoRemesher::resample(std::vector<Vector3> &vertices,
     std::vector<std::vector<size_t>> *vdbTriangles = nullptr;
     
 #if AUTO_REMESHER_DEBUG
-    qDebug() << "Island[" << islandIndex << "]: Vdb remeshing on voxel size:" << voxelSize;
+    std::cout << "Island[" << islandIndex << "]: Vdb remeshing on voxel size:" << voxelSize;
 #endif
     double areaBeforeVdbRemesh = calculateMeshArea(vertices, triangles);
     VdbRemesher vdbRemesher(&vertices, &triangles);
@@ -120,14 +116,14 @@ void AutoRemesher::resample(std::vector<Vector3> &vertices,
     vdbTriangles = vdbRemesher.takeVdbTriangles();
     double areaAfterVdbRemesh = calculateMeshArea(*vdbVertices, *vdbTriangles);
 #if AUTO_REMESHER_DEBUG
-    qDebug() << "Island[" << islandIndex << "]: Vdb remeshed to vertex count:" << vdbVertices->size() << "triangle count:" << vdbTriangles->size() << "on voxel size:" << voxelSize;
-    qDebug() << "Island[" << islandIndex << "]: Area before vdb remesh:" << areaBeforeVdbRemesh;
-    qDebug() << "Island[" << islandIndex << "]: Area after vdb remesh:" << areaAfterVdbRemesh;
+    std::cout << "Island[" << islandIndex << "]: Vdb remeshed to vertex count:" << vdbVertices->size() << "triangle count:" << vdbTriangles->size() << "on voxel size:" << voxelSize;
+    std::cout << "Island[" << islandIndex << "]: Area before vdb remesh:" << areaBeforeVdbRemesh;
+    std::cout << "Island[" << islandIndex << "]: Area after vdb remesh:" << areaAfterVdbRemesh;
 #endif
     bool isVdbGood = (vdbTriangles->size() >= 100 && std::abs(areaAfterVdbRemesh - areaBeforeVdbRemesh) < areaBeforeVdbRemesh * 0.5);
     
 #if AUTO_REMESHER_DEBUG
-    qDebug() << "Island[" << islandIndex << "]: Uniformly remeshing... isVdbGood:" << isVdbGood;
+    std::cout << "Island[" << islandIndex << "]: Uniformly remeshing... isVdbGood:" << isVdbGood;
 #endif
     IsotropicRemesher *isotropicRemesher = nullptr;
     if (isVdbGood) {
@@ -143,7 +139,7 @@ void AutoRemesher::resample(std::vector<Vector3> &vertices,
     triangles = isotropicRemesher->remeshedTriangles();
     delete isotropicRemesher;
 #if AUTO_REMESHER_DEBUG
-    qDebug() << "Island[" << islandIndex << "]: Uniformly remesh done, vertex count:" << vertices.size() << " triangle count:" << triangles.size();
+    std::cout << "Island[" << islandIndex << "]: Uniformly remesh done, vertex count:" << vertices.size() << " triangle count:" << triangles.size();
 #endif
     
     delete vdbVertices;
@@ -180,7 +176,7 @@ bool AutoRemesher::remesh()
     }
     
 #if AUTO_REMESHER_DEBUG
-    qDebug() << "Split to islands:" << m_trianglesIslands.size();
+    std::cout << "Split to islands:" << m_trianglesIslands.size();
 #endif
     
     struct IslandContext
@@ -260,7 +256,7 @@ bool AutoRemesher::remesh()
                 auto &thread = (*m_parameterizationThreads)[i];
                 
 #if AUTO_REMESHER_DEBUG
-                qDebug() << "Island[" << thread.islandIndex << "]: resampling...";
+                std::cout << "Island[" << thread.islandIndex << "]: resampling...";
 #endif
                 
                 resample(thread.island->vertices, thread.island->triangles, thread.island->voxelSize, thread.islandIndex);
@@ -269,7 +265,7 @@ bool AutoRemesher::remesh()
                 const auto &triangles = thread.island->triangles;
                 
 #if AUTO_REMESHER_DEBUG
-                qDebug() << "Island[" << thread.islandIndex << "]: parameterizing...";
+                std::cout << "Island[" << thread.islandIndex << "]: parameterizing...";
 #endif
                 ReportProgressContext reportProgressContext;
                 reportProgressContext.islandIndex = i;
@@ -286,7 +282,7 @@ bool AutoRemesher::remesh()
                 
                 std::vector<std::vector<Vector2>> *uvs = thread.parameterizer->takeTriangleUvs();
 #if AUTO_REMESHER_DEBUG
-                qDebug() << "Island[" << thread.islandIndex << "]: quad extracting...";
+                std::cout << "Island[" << thread.islandIndex << "]: quad extracting...";
 #endif
                 thread.remesher = new QuadExtractor(&vertices, 
                     &triangles, 
@@ -297,9 +293,9 @@ bool AutoRemesher::remesh()
                 }
 #if AUTO_REMESHER_DEBUG
                 if (nullptr != thread.remesher) {
-                    qDebug() << "Island[" << thread.islandIndex << "]: remesh done, vertices:" << thread.remesher->remeshedVertices().size() << " quads:" << thread.remesher->remeshedQuads().size();
+                    std::cout << "Island[" << thread.islandIndex << "]: remesh done, vertices:" << thread.remesher->remeshedVertices().size() << " quads:" << thread.remesher->remeshedQuads().size();
                 } else {
-                    qDebug() << "Island[" << thread.islandIndex << "]: remesh failed";
+                    std::cout << "Island[" << thread.islandIndex << "]: remesh failed";
                 }
 #endif
                 delete uvs;
@@ -334,7 +330,7 @@ bool AutoRemesher::remesh()
     }
 
 #if AUTO_REMESHER_DEBUG
-    qDebug() << "Remesh done";
+    std::cout << "Remesh done";
 #endif
 
     if (nullptr != m_progressHandler)
