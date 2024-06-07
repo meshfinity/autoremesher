@@ -244,7 +244,7 @@ void initialize_strings_vector(std::vector <string_pair>* vector)
     vector->push_back(string_pair("TBB: BUILD_DATE", required));
     vector->push_back(string_pair("TBB: BUILD_HOST", required));
     vector->push_back(string_pair("TBB: BUILD_OS", required));
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 #if !__MINGW32__
     vector->push_back(string_pair("TBB: BUILD_CL", required));
     vector->push_back(string_pair("TBB: BUILD_COMPILER", required));
@@ -286,7 +286,7 @@ void initialize_strings_vector(std::vector <string_pair>* vector)
     vector->push_back(string_pair("TBB: DO_ITT_NOTIFY", required));
     vector->push_back(string_pair("TBB: ITT", optional)); //#ifdef DO_ITT_NOTIFY
     vector->push_back(string_pair("TBB: ALLOCATOR", required));
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     vector->push_back(string_pair("TBB: Processor groups", required));
     vector->push_back(string_pair("TBB: ----- Group", optional_multiple));
 #endif

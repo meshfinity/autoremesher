@@ -45,7 +45,7 @@ int TestMain() {
 
 #else /* !__MIC__ */
 
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
 #include "tbb/machine/windows_api.h"
 #else
 #include <dlfcn.h>
@@ -111,7 +111,7 @@ void CModel::init_and_terminate( int maxthread ) {
 }
 
 extern "C"
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
 __declspec(dllexport)
 #endif
 void plugin_call(int maxthread)
@@ -137,7 +137,7 @@ extern "C" void plugin_call(int);
 
 void report_error_in(const char* function_name)
 {
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
     char* message;
     int code = GetLastError();
 
@@ -151,7 +151,7 @@ void report_error_in(const char* function_name)
 #endif
     REPORT( "%s failed with error %d: %s\n", function_name, code, message);
 
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
     LocalFree(message);
 #endif
 }
@@ -171,7 +171,7 @@ int TestMain () {
     LimitTLSKeysTo limitTLS(10);
 
     Harness::LIBRARY_HANDLE hLib;
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
     hLib = LoadLibrary("irml.dll");
     if ( !hLib )
         hLib = LoadLibrary("irml_debug.dll");
@@ -193,7 +193,7 @@ int TestMain () {
         hLib = Harness::OpenLibrary(TEST_LIBRARY_NAME("test_model_plugin_dll"));
         if ( !hLib ) {
 #if !__TBB_NO_IMPLICIT_LINKAGE
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
             report_error_in("LoadLibrary");
 #else
             report_error_in("dlopen");
@@ -205,7 +205,7 @@ int TestMain () {
         }
         my_plugin_call = (PLUGIN_CALL)Harness::GetAddress(hLib, "plugin_call");
         if (my_plugin_call==NULL) {
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
             report_error_in("GetProcAddress");
 #else
             report_error_in("dlsym");

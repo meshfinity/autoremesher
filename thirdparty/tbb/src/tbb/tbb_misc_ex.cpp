@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <limits.h>
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 #include "tbb/machine/windows_api.h"
 #if __TBB_WIN8UI_SUPPORT
 #include <thread>
@@ -238,7 +238,7 @@ int AvailableHwConcurrency() {
     return (n > 0) ? n : 1;
 }
 
-#elif _WIN32||_WIN64
+#elif _WIN32||defined(_WIN64)
 
 static atomic<do_once_state> hardware_concurrency_info;
 
@@ -394,7 +394,7 @@ int AvailableHwConcurrency() {
     return theProcessorGroups[ProcessorGroupInfo::NumGroups - 1].numProcsRunningTotal;
 }
 
-/* End of _WIN32||_WIN64 implementation */
+/* End of _WIN32||defined(_WIN64) implementation */
 #else
     #error AvailableHwConcurrency is not implemented for this OS
 #endif

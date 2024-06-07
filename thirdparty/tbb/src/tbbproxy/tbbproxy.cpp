@@ -35,7 +35,7 @@
 #include <typeinfo>
 
 // OS-specific includes.
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
     #include <windows.h>
     #define snprintf _snprintf
     #undef max
@@ -84,13 +84,13 @@ static void _say( char const * format, va_list args ) {
         On Windows, unfortunately, standard va_copy() macro is not available. However, it
         seems vsnprintf() does not modify args argument.
     */
-    #if ! ( _WIN32 || _WIN64 )
+    #if ! ( _WIN32 || defined(_WIN64) )
         va_list _args;
         __va_copy( _args, args );  // Make copy of args.
         #define args _args         // Substitute args with its copy, _args.
     #endif
     int len = vsnprintf( NULL, 0, format, args );
-    #if ! ( _WIN32 || _WIN64 )
+    #if ! ( _WIN32 || defined(_WIN64) )
         #undef args                // Remove substitution.
         va_end( _args );
     #endif
@@ -149,7 +149,7 @@ static tbb::runtime_loader::error_code error( tbb::runtime_loader::error_mode mo
     switch ( mode ) {
         case tbb::runtime_loader::em_abort : {
             say( "Aborting..." );
-            #if TBB_USE_DEBUG && ( _WIN32 || _WIN64 )
+            #if TBB_USE_DEBUG && ( _WIN32 || defined(_WIN64) )
                 DebugBreak();
             #endif
             abort();
@@ -199,7 +199,7 @@ static void trim( char * str ) {
 } // func trim
 
 
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
     // "When specifying a path, be sure to use backslashes (\), not forward slashes (/)."
     // (see http://msdn.microsoft.com/en-us/library/ms886736.aspx).
     const char proper_slash = '\\';
@@ -237,7 +237,7 @@ void cat_file( char const * dir, char const * file, char * buffer, size_t len ) 
 */
 
 
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
 
     // Implement Unix-like interface (dlopen, dlclose, dlsym, dlerror) via Win32 API functions.
 
@@ -407,7 +407,7 @@ static tbb::runtime_loader::error_code _load( char const * dll_name, int min_ver
         symbol_t & symbol = __tbb_internal_runtime_loader_symbols[ i ];
         // Verify symbol descriptor.
         __TBB_ASSERT( symbol.type == st_object || symbol.type == st_function, "Invalid symbol type" );
-        #if _WIN32 || _WIN64
+        #if _WIN32 || defined(_WIN64)
             __TBB_ASSERT( symbol.type == st_function, "Should not be symbols of object type on Windows" );
         #endif
         if ( symbol.type == st_object ) {

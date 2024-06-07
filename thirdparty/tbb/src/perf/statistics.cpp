@@ -374,7 +374,7 @@ void StatisticsCollector::Print(int dataOutput, const char *ModeName)
             // TODO:PivotMode
             char UserName[100];
             char TimerBuff[100], DateBuff[100];
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
             strcpy(UserName,getenv("USERNAME"));
 #else
             strcpy(UserName,getenv("USER"));

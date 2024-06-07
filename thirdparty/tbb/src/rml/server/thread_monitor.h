@@ -45,7 +45,7 @@
 
 // All platform-specific threading support is in this header.
 
-#if (_WIN32||_WIN64)&&!__TBB_ipf
+#if (_WIN32||defined(_WIN64))&&!__TBB_ipf
 // Deal with 64K aliasing.  The formula for "offset" is a Fibonacci hash function,
 // which has the desirable feature of spreading out the offsets fairly evenly
 // without knowing the total number of offsets, and furthermore unlikely to
@@ -59,7 +59,7 @@
 #else
 // Linux thread allocators avoid 64K aliasing.
 #define AVOID_64K_ALIASING(idx) tbb::internal::suppress_unused_warning(idx)
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
 
 namespace rml {
 

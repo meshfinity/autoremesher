@@ -61,7 +61,7 @@
 #include "../tbb/spin_mutex.cpp"
 #include "../tbb/private_server.cpp"
 #include "../tbb/concurrent_monitor.cpp"
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 #include "../tbb/semaphore.cpp"
 #endif
 #include "../rml/client/rml_tbb.cpp"

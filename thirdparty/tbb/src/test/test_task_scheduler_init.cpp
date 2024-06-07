@@ -107,7 +107,7 @@ void InitializeAndTerminate( int maxthread ) {
     }
 }
 
-#if _WIN64
+#if defined(_WIN64)
 namespace std {      // 64-bit Windows compilers have not caught up with 1998 ISO C++ standard
     using ::srand;
 }

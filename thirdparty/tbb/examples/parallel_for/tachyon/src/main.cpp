@@ -320,7 +320,7 @@ int CreateScene(argoptions &opt) {
     useoptions(&opt, global_scene);
 
 #ifdef DEFAULT_MODELFILE
-#if  _WIN32||_WIN64
+#if  _WIN32||defined(_WIN64)
 #define _GLUE_FILENAME(x) "..\\dat\\" #x
 #else
 #define _GLUE_FILENAME(x) #x
@@ -382,4 +382,3 @@ int main (int argc, char *argv[]) {
     }
 }
 #endif
-

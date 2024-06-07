@@ -80,7 +80,7 @@ public:
             DoOneConnection<MyFactory,MyClient> doc(MaxThread,Nesting(nesting.level+1,nesting.limit),0,false);
             doc(0);
         }
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
         // test activate/deactivate
         if( t.n_thread>1 && t.n_thread%2==0 ) {
             if( nesting.level==0 ) {
@@ -96,7 +96,7 @@ public:
                 }
             }
         }
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
         ++t.barrier;
     }
     static const bool is_omp = true;
@@ -105,10 +105,10 @@ public:
 
 void FireUpJobs( MyServer& server, MyClient& client, int max_thread, int n_extra, Checker* checker ) {
     ASSERT( max_thread>=0, NULL );
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     ::rml::server::execution_resource_t me;
     server.register_master( me );
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
     client.server = &server;
     MyTeam team(server,size_t(max_thread));
     MyServer::size_type n_thread = 0;
@@ -172,7 +172,7 @@ void FireUpJobs( MyServer& server, MyClient& client, int max_thread, int n_extra
             ASSERT( !team.info[i].ran, "thread on team ran with illegal index" );
         }
     }
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     server.unregister_master( me );
 #endif
 }

@@ -289,7 +289,7 @@ struct WorkForCondVarCtor: NoAssign {
         if( tid&1 ) {
             my_mtx.lock();
             ++barrier;
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
             if( !tbb::interface5::internal::internal_condition_variable_wait( *handle, &my_mtx ) ) {
                 int ec = GetLastError();
                 ASSERT( ec!=WAIT_TIMEOUT, NULL );
@@ -309,7 +309,7 @@ struct WorkForCondVarCtor: NoAssign {
             }
             if( res ) my_mtx.unlock();
             do {
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
                 tbb::interface5::internal::internal_condition_variable_notify_one( *handle );
 #else
                 pthread_cond_signal( handle );
@@ -662,7 +662,7 @@ void TestConditionVariable( const char* name, int nthread )
     // Test constructor.
     {
       condition_variable cv1;
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
       condition_variable::native_handle_type handle = cv1.native_handle();
       ASSERT( uintptr_t(&handle->cv_event)==uintptr_t(&handle->cv_native), NULL );
 #endif

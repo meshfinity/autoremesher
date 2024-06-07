@@ -45,7 +45,7 @@ public:
         // For Windows Store* apps it's impossible to set stack size
         if (p==thread_stack_size)
             return;
-#elif __TBB_x86_64 && (_WIN32 || _WIN64)
+#elif __TBB_x86_64 && (_WIN32 || defined(_WIN64))
         if (p==thread_stack_size)
             __TBB_ASSERT_RELEASE((unsigned)value == value, "Stack size is limited to unsigned int range");
 #endif

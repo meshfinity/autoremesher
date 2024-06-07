@@ -117,7 +117,7 @@ void testSemaphore( int semInitCnt, int extraThreads ) {
 }
 
 #include "../tbb/semaphore.cpp"
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 #include "../tbb/dynamic_link.cpp"
 
 void testOSVersion() {
@@ -143,7 +143,7 @@ void testOSVersion() {
      }
 #endif /* __TBB_USE_SRWLOCK */
 }
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
 
 #define N_TIMES 1000
 
@@ -293,7 +293,7 @@ void testProducerConsumer( unsigned totTokens, unsigned nTokens, unsigned pWait,
 
 int TestMain() {
     REMARK("Started\n");
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     testOSVersion();
 #endif
     if(MaxThread > 0) {

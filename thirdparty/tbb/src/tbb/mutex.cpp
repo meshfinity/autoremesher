@@ -18,7 +18,7 @@
 
 */
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 #include <errno.h> // EDEADLK
 #endif
 #include "tbb/mutex.h"
@@ -27,7 +27,7 @@
 namespace tbb {
     void mutex::scoped_lock::internal_acquire( mutex& m ) {
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
         switch( m.state ) {
         case INITIALIZED:
         case HELD:
@@ -51,13 +51,13 @@ namespace tbb {
         int error_code = pthread_mutex_lock(&m.impl);
         if( error_code )
             tbb::internal::handle_perror(error_code,"mutex::scoped_lock: pthread_mutex_lock failed");
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
         my_mutex = &m;
     }
 
 void mutex::scoped_lock::internal_release() {
     __TBB_ASSERT( my_mutex, "mutex::scoped_lock: not holding a mutex" );
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
      switch( my_mutex->state ) {
         case INITIALIZED:
             __TBB_ASSERT(false,"mutex::scoped_lock: try to release the lock without acquisition");
@@ -76,12 +76,12 @@ void mutex::scoped_lock::internal_release() {
 #else
      int error_code = pthread_mutex_unlock(&my_mutex->impl);
      __TBB_ASSERT_EX(!error_code, "mutex::scoped_lock: pthread_mutex_unlock failed");
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
      my_mutex = NULL;
 }
 
 bool mutex::scoped_lock::internal_try_acquire( mutex& m ) {
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     switch( m.state ) {
         case INITIALIZED:
         case HELD:
@@ -93,10 +93,10 @@ bool mutex::scoped_lock::internal_try_acquire( mutex& m ) {
             __TBB_ASSERT(false,"mutex::scoped_lock: illegal mutex state");
             break;
     }
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
 
     bool result;
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     result = TryEnterCriticalSection(&m.impl)!=0;
     if( result ) {
         __TBB_ASSERT(m.state!=HELD, "mutex::scoped_lock: deadlock caused by attempt to reacquire held mutex");
@@ -104,26 +104,26 @@ bool mutex::scoped_lock::internal_try_acquire( mutex& m ) {
     }
 #else
     result = pthread_mutex_trylock(&m.impl)==0;
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
     if( result )
         my_mutex = &m;
     return result;
 }
 
 void mutex::internal_construct() {
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     InitializeCriticalSectionEx(&impl, 4000, 0);
     state = INITIALIZED;
 #else
     int error_code = pthread_mutex_init(&impl,NULL);
     if( error_code )
         tbb::internal::handle_perror(error_code,"mutex: pthread_mutex_init failed");
-#endif /* _WIN32||_WIN64*/
+#endif /* _WIN32||defined(_WIN64)*/
     ITT_SYNC_CREATE(&impl, _T("tbb::mutex"), _T(""));
 }
 
 void mutex::internal_destroy() {
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     switch( state ) {
       case INITIALIZED:
         DeleteCriticalSection(&impl);
@@ -139,7 +139,7 @@ void mutex::internal_destroy() {
 #else
     int error_code = pthread_mutex_destroy(&impl);
     __TBB_ASSERT_EX(!error_code,"mutex: pthread_mutex_destroy failed");
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
 }
 
 } // namespace tbb

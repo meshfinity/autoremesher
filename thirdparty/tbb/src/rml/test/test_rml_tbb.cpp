@@ -87,10 +87,10 @@ void FireUpJobs( MyServer& server, MyClient& client, int n_thread, int n_extra, 
     REMARK("client %d: calling adjust_job_count_estimate(%d)\n", client.client_id(),n_thread);
     // Exercise independent_thread_number_changed, even for zero values.
     server.independent_thread_number_changed( n_extra );
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     ::rml::server::execution_resource_t me;
     server.register_master( me );
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
     // Experiments indicate that when oversubscribing, the main thread should wait a little
     // while for the RML worker threads to do some work. 
     if( checker ) {
@@ -145,7 +145,7 @@ void FireUpJobs( MyServer& server, MyClient& client, int n_thread, int n_extra, 
     }
 #endif /* RML_USE_WCRM */
     server.adjust_job_count_estimate(-n_thread);
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     server.unregister_master( me );
 #endif
     // Give RML some time to respond

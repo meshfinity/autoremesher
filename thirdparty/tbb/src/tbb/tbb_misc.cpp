@@ -32,7 +32,7 @@
 #include <cstdlib>
 #include <stdexcept>
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 #include "tbb/machine/windows_api.h"
 #endif
 
@@ -105,7 +105,7 @@ void handle_perror( int error_code, const char* what ) {
 #endif /* !TBB_USE_EXCEPTIONS */
 }
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 void handle_win_error( int error_code ) {
     char buf[512];
 #if !__TBB_WIN8UI_SUPPORT
@@ -121,7 +121,7 @@ void handle_win_error( int error_code ) {
     PRINT_ERROR_AND_ABORT( "runtime_error", buf);
 #endif /* !TBB_USE_EXCEPTIONS */
 }
-#endif // _WIN32||_WIN64
+#endif // _WIN32||defined(_WIN64)
 
 void throw_bad_last_alloc_exception_v4() {
     throw_exception_v4(eid_bad_last_alloc);

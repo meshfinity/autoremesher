@@ -32,7 +32,7 @@
 #endif
 #include "harness.h"
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 #include "tbb/concurrent_hash_map.h"
 
 HANDLE getCurrentThreadHandle()
@@ -75,12 +75,12 @@ static TidTableType tidTable;
 
 static void SigHandler(int) { }
 
-#endif // _WIN32||_WIN64
+#endif // _WIN32||defined(_WIN64)
 
 class AllocTask {
 public:
     void operator() (const tbb::blocked_range<int> &r) const {
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
         HANDLE h = getCurrentThreadHandle();
         DWORD tid = GetCurrentThreadId();
         {
@@ -186,7 +186,7 @@ int TestMain()
     TestSchedulerMemLeaks();
 
     bool child = false;
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     DWORD masterTid = GetCurrentThreadId();
 #else
     struct sigaction sa;
@@ -219,7 +219,7 @@ int TestMain()
                               tbb::simple_partitioner());
             sch.terminate();
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
             // check that there is no alive threads after terminate()
             for (TidTableType::const_iterator it = tidTable.begin();
                  it != tidTable.end(); ++it) {
@@ -228,7 +228,7 @@ int TestMain()
                 }
             }
             tidTable.clear();
-#else // _WIN32||_WIN64
+#else // _WIN32||defined(_WIN64)
             if (child)
                 exit(0);
             else {
@@ -267,7 +267,7 @@ int TestMain()
                     }
                 }
             }
-#endif // _WIN32||_WIN64
+#endif // _WIN32||defined(_WIN64)
         }
     }
     REMARK("\n");
@@ -284,4 +284,3 @@ int TestMain()
 
     return Harness::Done;
 }
-

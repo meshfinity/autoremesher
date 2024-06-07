@@ -66,7 +66,7 @@ inline int AvailableHwConcurrency() {
 #endif /* __TBB_HardwareConcurrency */
 
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 
 //! Returns number of processor groups in the current OS configuration.
 /** AvailableHwConcurrency must be called at least once before calling this method. **/
@@ -78,7 +78,7 @@ int FindProcessorGroupIndex ( int processorIndex );
 //! Affinitizes the thread to the specified processor group
 void MoveThreadIntoProcessorGroup( void* hThread, int groupIndex );
 
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
 
 //! Throws std::runtime_error with what() returning error_code description prefixed with aux_info
 void handle_win_error( int error_code );

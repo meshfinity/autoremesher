@@ -21,7 +21,7 @@
 #ifndef __TBB_condition_variable_H
 #define __TBB_condition_variable_H
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 #include "../machine/windows_api.h"
 
 namespace tbb { 
@@ -47,7 +47,7 @@ typedef void* CONDITION_VARIABLE;
 typedef CONDITION_VARIABLE* PCONDITION_VARIABLE;
 #endif
 
-#else /* if not _WIN32||_WIN64 */
+#else /* if not _WIN32||defined(_WIN64) */
 #include <errno.h> // some systems need it for ETIMEDOUT
 #include <pthread.h>
 #if __linux__
@@ -55,7 +55,7 @@ typedef CONDITION_VARIABLE* PCONDITION_VARIABLE;
 #else /* generic Unix */
 #include <sys/time.h>
 #endif
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
 
 #include "../tbb_stddef.h"
 #include "../mutex.h"
@@ -258,7 +258,7 @@ void swap(unique_lock<M>& x, unique_lock<M>& y) { x.swap( y ); }
 
 namespace internal {
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 union condvar_impl_t {
     condition_variable_using_event cv_event;
     CONDITION_VARIABLE             cv_native;
@@ -269,7 +269,7 @@ void __TBB_EXPORTED_FUNC internal_condition_variable_notify_one( condvar_impl_t&
 void __TBB_EXPORTED_FUNC internal_condition_variable_notify_all( condvar_impl_t& cv );
 bool __TBB_EXPORTED_FUNC internal_condition_variable_wait( condvar_impl_t& cv, mutex* mtx, const tick_count::interval_t* i = NULL );
 
-#else /* if !(_WIN32||_WIN64), i.e., POSIX threads */
+#else /* if !(_WIN32||defined(_WIN64)), i.e., POSIX threads */
 typedef pthread_cond_t condvar_impl_t;
 #endif
 
@@ -286,7 +286,7 @@ class condition_variable : tbb::internal::no_copy {
 public:
     //! Constructor
     condition_variable() { 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
         internal_initialize_condition_variable( my_cv ); 
 #else
         pthread_cond_init( &my_cv, NULL );
@@ -296,7 +296,7 @@ public:
     //! Destructor
     ~condition_variable() { 
         //precondition: There shall be no thread blocked on *this.
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
         internal_destroy_condition_variable( my_cv );
 #else
         pthread_cond_destroy( &my_cv );
@@ -305,7 +305,7 @@ public:
 
     //! Notify one thread and wake it up
     void notify_one() { 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
         internal_condition_variable_notify_one( my_cv ); 
 #else
         pthread_cond_signal( &my_cv );
@@ -314,7 +314,7 @@ public:
 
     //! Notify all threads 
     void notify_all() { 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
         internal_condition_variable_notify_all( my_cv ); 
 #else
         pthread_cond_broadcast( &my_cv );
@@ -357,7 +357,7 @@ private:
 };
 
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 inline void condition_variable::wait( unique_lock<mutex>& lock )
 {
     __TBB_ASSERT( lock.owns, NULL );
@@ -391,7 +391,7 @@ inline cv_status condition_variable::wait_for( unique_lock<mutex>& lock, const t
     return rc;
 }
 
-#else /* !(_WIN32||_WIN64) */
+#else /* !(_WIN32||defined(_WIN64)) */
 inline void condition_variable::wait( unique_lock<mutex>& lock )
 {
     __TBB_ASSERT( lock.owns, NULL );
@@ -443,7 +443,7 @@ inline cv_status condition_variable::wait_for( unique_lock<mutex>& lock, const t
     lock.owns = true;
     return rc;
 }
-#endif /* !(_WIN32||_WIN64) */
+#endif /* !(_WIN32||defined(_WIN64)) */
 
 } // namespace interface5
 

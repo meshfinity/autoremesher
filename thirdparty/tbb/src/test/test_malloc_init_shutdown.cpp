@@ -119,7 +119,7 @@ void Test2() {
     t2b.wait_to_finish(); // t2a is monitored by t2b
 }
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 
 void TestKeyDtor() {}
 
@@ -166,7 +166,7 @@ void TestKeyDtor() {
         NativeParallelFor( 1, TestThread(1) );
 }
 
-#endif // _WIN32||_WIN64
+#endif // _WIN32||defined(_WIN64)
 
 int TestMain () {
     Test1(); // requires malloc initialization so should be first

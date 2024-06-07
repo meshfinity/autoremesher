@@ -27,7 +27,7 @@
 #else
 #include <stdint.h> // for uintptr_t
 #endif
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
 #include <windows.h>
 #else
 #include <unistd.h>

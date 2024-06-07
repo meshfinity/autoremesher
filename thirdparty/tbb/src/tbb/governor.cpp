@@ -275,7 +275,7 @@ __cilk_tbb_retcode governor::stack_op_handler( __cilk_tbb_stack_op op, void* dat
     generic_scheduler* s = static_cast<generic_scheduler*>(data);
 #if TBB_USE_ASSERT
     void* current = local_scheduler_if_initialized();
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     uintptr_t thread_id = GetCurrentThreadId();
 #else
     uintptr_t thread_id = uintptr_t(pthread_self());

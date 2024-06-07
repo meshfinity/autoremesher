@@ -97,7 +97,7 @@ public:
         real_ids[num] = THIS_THREAD::get_id();
 
         const double WAIT = .1;
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
         const double LONG_TOLERANCE = 0.120;  // maximal scheduling quantum for Windows Server
 #else
         const double LONG_TOLERANCE = 0.200;  // reasonable upper bound

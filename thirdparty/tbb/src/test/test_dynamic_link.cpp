@@ -23,11 +23,11 @@ enum FOO_TYPE {
     FOO_IMPLEMENTATION
 };
 
-#if _WIN32 || _WIN64
+#if _WIN32 || defined(_WIN64)
 #define TEST_EXPORT
 #else
 #define TEST_EXPORT extern "C"
-#endif /* _WIN32 || _WIN64 */
+#endif /* _WIN32 || defined(_WIN64) */
 
 // foo "implementations".
 TEST_EXPORT FOO_TYPE foo1() { return FOO_IMPLEMENTATION; }

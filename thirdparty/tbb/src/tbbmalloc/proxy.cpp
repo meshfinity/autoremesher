@@ -343,7 +343,7 @@ void* __TBB_malloc_safer__aligned_realloc_##CRTLIB( void *ptr, size_t size, size
 // (i.e., it's OK to have same pattern for unrelated functions), patterns are requied to
 // mark instruction bound +1 byte.
 const char* known_bytecodes[] = {
-#if _WIN64
+#if defined(_WIN64)
     "4883EC284885C974",       //release free() win64
     "4885C974375348",         //release free() 8.0.50727.42 win64, 10.0
  #if __TBB_OVERLOAD_OLD_MSVCR
@@ -393,7 +393,7 @@ const char* known_bytecodes[] = {
 #define __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL_ENTRY_REDIRECT(CRT_VER,function_name,dest_func,dbg_modifier) \
     ReplaceFunctionWithStore( #CRT_VER #dbg_modifier ".dll", #function_name, (FUNCPTR)__TBB_malloc_safer_##dest_func##_##CRT_VER##dbg_modifier, 0, NULL );
 
-#if _WIN64
+#if defined(_WIN64)
 // only WIN64/ucrtbase.dll/_aligned_msize combination requires PROCESS_JMP
 // TODO: rename to be more generic
 #define __TBB_ORIG_ALLOCATOR_REPLACEMENT_CALL_ENTRY_ALIGNED_MSIZE(CRT_VER,function_name,dbg_modifier) \
@@ -557,7 +557,7 @@ FRDATA c_routines_to_replace[] = {
 };
 
 FRDATA cxx_routines_to_replace[] = {
-#if _WIN64
+#if defined(_WIN64)
     { "??2@YAPEAX_K@Z", (FUNCPTR)operator_new, FRR_FAIL },
     { "??_U@YAPEAX_K@Z", (FUNCPTR)operator_new_arr, FRR_FAIL },
     { "??3@YAXPEAX@Z", (FUNCPTR)operator_delete, FRR_FAIL },

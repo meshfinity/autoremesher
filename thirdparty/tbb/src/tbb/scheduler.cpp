@@ -1188,9 +1188,9 @@ generic_scheduler* generic_scheduler::create_master( arena* a ) {
     __TBB_ASSERT( s->my_arena_index == 0, "Master thread must occupy the first slot in its arena" );
     governor::sign_on(s);
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     s->my_market->register_master( s->master_exec_resource );
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
     // Process any existing observers.
 #if __TBB_ARENA_OBSERVER
     __TBB_ASSERT( !a || a->my_observers.empty(), "Just created arena cannot have any observers associated with it" );
@@ -1239,9 +1239,9 @@ void generic_scheduler::cleanup_master( bool needs_wait_workers ) {
 #if __TBB_SCHEDULER_OBSERVER
     the_global_observer_list.notify_exit_observers( my_last_global_observer, /*worker=*/false );
 #endif /* __TBB_SCHEDULER_OBSERVER */
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     m->unregister_master( master_exec_resource );
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
     if( a ) {
         __TBB_ASSERT(a->my_slots+0 == my_arena_slot, NULL);
 #if __TBB_STATISTICS

@@ -41,7 +41,7 @@ const int FE_TONEAREST = 0x0000,
 const int NumSseModes = 4;
 const int SseModes[NumSseModes] = { 0, SSE_DAZ, SSE_FTZ, SSE_DAZ | SSE_FTZ };
 
-#if _WIN64 && !__TBB_X86_MSVC_INLINE_ASM_AVAILABLE && !__MINGW64__
+#if defined(_WIN64) && !__TBB_X86_MSVC_INLINE_ASM_AVAILABLE && !__MINGW64__
 // MinGW uses inline implementation from tbb/machine/linux_intel64.h
 // and when inline asm is not available, the library uses out of line assembly which is not exported
 // thus reimplementing them here

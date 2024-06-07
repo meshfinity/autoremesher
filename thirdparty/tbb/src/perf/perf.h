@@ -52,7 +52,7 @@
 #endif /* !_USRDLL */
 #endif /* !__TBB_PERF_API */
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 
 namespace Perf {
     typedef unsigned __int64 tick_t;
@@ -253,5 +253,3 @@ __TBB_PERF_API int TestMain( int argc, char* argv[],
 } // namespace Perf
 
 #endif /* __tbb_perf_h__ */
-
-

@@ -23,7 +23,7 @@
 
 #include "tbb_stddef.h"
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 #include "machine/windows_api.h"
 #define __TBB_NATIVE_THREAD_ROUTINE unsigned WINAPI
 #define __TBB_NATIVE_THREAD_ROUTINE_PTR(r) unsigned (WINAPI* r)( void* )
@@ -41,7 +41,7 @@ namespace tbb { namespace internal {
 namespace tbb { namespace internal {
     typedef pthread_t thread_id_type;
 }} //namespace tbb::internal
-#endif // _WIN32||_WIN64
+#endif // _WIN32||defined(_WIN64)
 
 #include "atomic.h"
 #include "internal/_tbb_hash_compare_impl.h"
@@ -128,18 +128,18 @@ namespace internal {
 #endif
         tbb_thread_v3(const tbb_thread_v3&); // = delete;   // Deny access
     public:
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
         typedef HANDLE native_handle_type;
 #else
         typedef pthread_t native_handle_type;
-#endif // _WIN32||_WIN64
+#endif // _WIN32||defined(_WIN64)
 
         class id;
         //! Constructs a thread object that does not represent a thread of execution.
         tbb_thread_v3() __TBB_NOEXCEPT(true) : my_handle(0)
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
             , my_thread_id(0)
-#endif // _WIN32||_WIN64
+#endif // _WIN32||defined(_WIN64)
         {}
 
         //! Constructs an object and executes f() in a new thread
@@ -161,7 +161,7 @@ namespace internal {
 #if __TBB_CPP11_RVALUE_REF_PRESENT
         tbb_thread_v3(tbb_thread_v3&& x) __TBB_NOEXCEPT(true)
             : my_handle(x.my_handle)
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
             , my_thread_id(x.my_thread_id)
 #endif
         {
@@ -204,22 +204,22 @@ namespace internal {
         static unsigned __TBB_EXPORTED_FUNC hardware_concurrency() __TBB_NOEXCEPT(true);
     private:
         native_handle_type my_handle;
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
         thread_id_type my_thread_id;
-#endif // _WIN32||_WIN64
+#endif // _WIN32||defined(_WIN64)
 
         void internal_wipe() __TBB_NOEXCEPT(true) {
             my_handle = 0;
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
             my_thread_id = 0;
 #endif
         }
         void internal_move(tbb_thread_v3& x) __TBB_NOEXCEPT(true) {
             if (joinable()) detach();
             my_handle = x.my_handle;
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
             my_thread_id = x.my_thread_id;
-#endif // _WIN32||_WIN64
+#endif // _WIN32||defined(_WIN64)
             x.internal_wipe();
         }
 
@@ -267,11 +267,11 @@ namespace internal {
     }; // tbb_thread_v3::id
 
     tbb_thread_v3::id tbb_thread_v3::get_id() const __TBB_NOEXCEPT(true) {
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
         return id(my_thread_id);
 #else
         return id(my_handle);
-#endif // _WIN32||_WIN64
+#endif // _WIN32||defined(_WIN64)
     }
 
     void __TBB_EXPORTED_FUNC move_v3( tbb_thread_v3& t1, tbb_thread_v3& t2 );
@@ -322,9 +322,9 @@ inline void move( tbb_thread& t1, tbb_thread& t2 ) {
 
 inline void swap( internal::tbb_thread_v3& t1, internal::tbb_thread_v3& t2 )  __TBB_NOEXCEPT(true) {
     std::swap(t1.my_handle, t2.my_handle);
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     std::swap(t1.my_thread_id, t2.my_thread_id);
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
 }
 
 namespace this_tbb_thread {

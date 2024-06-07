@@ -67,7 +67,7 @@
 
 /** Preprocessor symbols to determine HW architecture **/
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 #   if defined(_M_X64)||defined(__x86_64__)  // the latter for MinGW support
 #       define __TBB_x86_64 1
 #   elif defined(_M_IA64)
@@ -429,7 +429,7 @@
 /** __TBB_SOURCE_DIRECTLY_INCLUDED is a mode used in whitebox testing when
     it's necessary to test internal functions not exported from TBB DLLs
 **/
-#if (_WIN32||_WIN64) && (__TBB_SOURCE_DIRECTLY_INCLUDED || TBB_USE_PREVIEW_BINARY)
+#if (_WIN32||defined(_WIN64)) && (__TBB_SOURCE_DIRECTLY_INCLUDED || TBB_USE_PREVIEW_BINARY)
     #define __TBB_NO_IMPLICIT_LINKAGE 1
     #define __TBBMALLOC_NO_IMPLICIT_LINKAGE 1
 #endif
@@ -501,7 +501,7 @@
 #endif
 
 #if !defined(__TBB_SURVIVE_THREAD_SWITCH) && \
-          (_WIN32 || _WIN64 || __APPLE__ || (__linux__ && !__ANDROID__))
+          (_WIN32 || defined(_WIN64) || __APPLE__ || (__linux__ && !__ANDROID__))
     #define __TBB_SURVIVE_THREAD_SWITCH 1
 #endif /* __TBB_SURVIVE_THREAD_SWITCH */
 
@@ -586,7 +586,7 @@
     #define __TBB_THROW_ACROSS_MODULE_BOUNDARY_BROKEN 0
 #endif
 
-#if (_WIN32||_WIN64) && __INTEL_COMPILER == 1110
+#if (_WIN32||defined(_WIN64)) && __INTEL_COMPILER == 1110
     /** That's a bug in Intel(R) C++ Compiler 11.1.044/IA-32 architecture/Windows* OS, that leads to a worker thread crash on the thread's startup. **/
     #define __TBB_ICL_11_1_CODE_GEN_BROKEN 1
 #endif

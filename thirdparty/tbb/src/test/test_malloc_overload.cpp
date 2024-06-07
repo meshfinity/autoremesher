@@ -19,7 +19,7 @@
 */
 
 
-#if (_WIN32 || _WIN64)
+#if (_WIN32 || defined(_WIN64))
 // As the test is intentionally build with /EHs-, suppress multiple VS2005's
 // warnings like C4530: C++ exception handler used, but unwind semantics are not enabled
 #if defined(_MSC_VER) && !__INTEL_COMPILER
@@ -31,7 +31,7 @@
 #endif
 // to use strdup w/o warnings
 #define _CRT_NONSTDC_NO_DEPRECATE 1
-#endif // _WIN32 || _WIN64
+#endif // _WIN32 || defined(_WIN64)
 
 #define _ISOC11_SOURCE 1 // to get C11 declarations for GLIBC
 #define HARNESS_NO_PARSE_COMMAND_LINE 1

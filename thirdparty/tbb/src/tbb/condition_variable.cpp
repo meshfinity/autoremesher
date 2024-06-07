@@ -30,7 +30,7 @@ namespace tbb {
 namespace internal {
 
 //condition_variable
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 using tbb::interface5::internal::condition_variable_using_event;
 
 static atomic<do_once_state> condvar_api_state;
@@ -144,11 +144,11 @@ void init_condvar_module()
     if( dynamic_link( "Kernel32.dll", CondVarLinkTable, 4 ) )
         __TBB_destroy_condvar = (void (WINAPI *)(PCONDITION_VARIABLE))&destroy_condvar_noop;
 }
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
 
 } // namespace internal
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 
 namespace interface5 {
 namespace internal {
@@ -194,6 +194,6 @@ bool internal_condition_variable_wait( condvar_impl_t& cv, mutex* mtx, const tic
 } // namespace internal
 } // nameespace interface5
 
-#endif /* _WIN32||_WIN64 */
+#endif /* _WIN32||defined(_WIN64) */
 
 } // namespace tbb

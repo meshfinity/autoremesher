@@ -23,7 +23,7 @@
 
 #include "tbb_stddef.h"
 
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
 #include "machine/windows_api.h"
 #elif __linux__
 #include <ctime>
@@ -73,7 +73,7 @@ public:
         interval_t& operator-=( const interval_t& i ) {value -= i.value; return *this;}
     private:
         static long long ticks_per_second(){
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
             LARGE_INTEGER qpfreq;
             int rval = QueryPerformanceFrequency(&qpfreq);
             __TBB_ASSERT_EX(rval, "QueryPerformanceFrequency returned zero");
@@ -104,7 +104,7 @@ private:
 
 inline tick_count tick_count::now() {
     tick_count result;
-#if _WIN32||_WIN64
+#if _WIN32||defined(_WIN64)
     LARGE_INTEGER qpcnt;
     int rval = QueryPerformanceCounter(&qpcnt);
     __TBB_ASSERT_EX(rval, "QueryPerformanceCounter failed");

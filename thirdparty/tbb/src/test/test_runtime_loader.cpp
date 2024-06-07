@@ -24,7 +24,7 @@
     #pragma warning (disable: 4530)
 #endif
 
-#if !(_WIN32||_WIN64) || (__MINGW64__||__MINGW32__)
+#if !(_WIN32||defined(_WIN64)) || (__MINGW64__||__MINGW32__)
 
 #include "harness.h"
 
@@ -32,7 +32,7 @@ int TestMain () {
     return Harness::Skipped;
 }
 
-#else // !(_WIN32||_WIN64)
+#else // !(_WIN32||defined(_WIN64))
 
 #define TBB_PREVIEW_RUNTIME_LOADER 1
 #include "tbb/runtime_loader.h"
@@ -288,6 +288,6 @@ int TestMain() {
 
 } // main
 
-#endif // !(_WIN32||_WIN64)
+#endif // !(_WIN32||defined(_WIN64))
 
 // end of file //
