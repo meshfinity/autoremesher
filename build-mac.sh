@@ -7,7 +7,7 @@ export CMAKE_APPLE_SILICON_PROCESSOR=x86_64
 export CMAKE_SYSTEM_PROCESSOR=x86_64
 export CMAKE_OSX_ARCHITECTURES=x86_64
 
-arch --x86_64 /usr/local/Homebrew/bin/brew install c-blosc cgal gcc llvm make mpfr openvdb qt tbb zlib
+arch --x86_64 /usr/local/Homebrew/bin/brew install boost c-blosc cgal gcc llvm make mpfr openvdb qt tbb zlib
 python -m venv venv
 source venv/bin/activate
 pip install macpack

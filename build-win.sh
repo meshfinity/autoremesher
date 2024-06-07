@@ -7,7 +7,7 @@ export CMAKE_APPLE_SILICON_PROCESSOR=x86_64
 export CMAKE_SYSTEM_PROCESSOR=x86_64
 export CMAKE_OSX_ARCHITECTURES=x86_64
 
-pacman -S --noconfirm cmake gcc make mingw-w64-x86_64-qt6 mingw-w64-x86_64-qt-creator
+pacman -S --noconfirm cmake gcc make mingw-w64-x86_64-boost mingw-w64-x86_64-qt6 mingw-w64-x86_64-qt-creator
 
 cd thirdparty/blosc/c-blosc-1.18.1
 mkdir build

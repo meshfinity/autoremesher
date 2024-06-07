@@ -1,3 +1,11 @@
+/venv
+/autoremesher.app
+/obj
+/moc
+Makefile
+.qmake.stash
+.DS_Store
+
 # Prerequisites
 *.d
 
