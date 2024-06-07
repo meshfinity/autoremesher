@@ -150,7 +150,7 @@ template<> struct atomic_selector<2> {
 };
 
 template<> struct atomic_selector<4> {
-#if _MSC_VER && !_WIN64
+#if _MSC_VER && !defined(_WIN64)
     // Work-around that avoids spurious /Wp64 warnings
     typedef intptr_t word;
 #else
