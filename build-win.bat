@@ -1,7 +1,5 @@
 call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
 
-exit /b
-
 set AUTOREMESHER_BUILD_DIR=%~dp0
 
 cd thirdparty/blosc/c-blosc-1.18.1
