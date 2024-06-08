@@ -7,6 +7,9 @@ on:
         description: Tag name for release
         required: true
 
+permissions:
+  contents: write
+
 jobs:
   build-mac:
     name: Build AutoRemesher for macOS
@@ -20,7 +23,7 @@ jobs:
       - run: ./build-mac.sh
       - run: find $HOME/autoremesher/autoremesher.app -name .DS_Store -delete
       - run: ditto -c -k --sequesterRsrc --keepParent $HOME/autoremesher/autoremesher.app $HOME/autoremesher-${{ github.event.inputs.tagName }}-mac.zip
-      - uses: softprops/action-gh-release@v0.1.15
+      - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.tagName }}
           files: $HOME/autoremesher-${{ github.event.inputs.tagName }}-mac.zip
