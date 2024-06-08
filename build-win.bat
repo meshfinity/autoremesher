@@ -36,7 +36,6 @@ tar -xf boost_1_66_0.zip
 mkdir C:\Libraries
 xcopy boost_1_66_0 C:\Libraries /s /e
 
-
 cd thirdparty/openvdb/openvdb-7.0.0
 mkdir build
 cd build
@@ -44,10 +43,13 @@ cmake -G "Visual Studio 17 2022" -A x64 -D "OPENVDB_CORE_STATIC=OFF" -D "OPENVDB
 cmake --build . --config Release
 cd %AUTOREMESHER_BUILD_DIR%
 
+mkdir C:\Qt
+cd C:\Qt
 curl -O -L https://github.com/miurahr/aqtinstall/releases/download/Continuous/aqt.exe
 aqt install-qt windows desktop 5.13.2 win64_msvc2017_64
+cd %AUTOREMESHER_BUILD_DIR%
 
-set QTDIR=%AUTOREMESHER_BUILD_DIR%\5.13.2\msvc2017_64
+set QTDIR=C:\Qt\5.13.2\msvc2017_64
 set PATH=%PATH%;%QTDIR%\bin
 qmake "BOOST_INCLUDEDIR=C:/Libraries/boost_1_66_0" "CGAL_DIR=%AUTOREMESHER_BUILD_DIR%\thirdparty\cgal\CGAL-5.1-beta1"
 nmake -f Makefile.Release
