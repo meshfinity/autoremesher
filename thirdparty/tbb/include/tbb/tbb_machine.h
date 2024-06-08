@@ -188,7 +188,7 @@ template<> struct atomic_selector<8> {
 #define __TBB_ENDIAN_BIG          1
 #define __TBB_ENDIAN_DETECT       2
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 
 #ifdef _MANAGED
 #pragma managed(push, off)

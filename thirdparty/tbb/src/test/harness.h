@@ -80,7 +80,7 @@ int TestMain ();
     #define REPORT_FATAL_ERROR REPORT
 #endif /* !__MIC__ */
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     #include "tbb/machine/windows_api.h"
     #if _WIN32_WINNT > 0x0501 && _MSC_VER && !_M_ARM
         // Suppress "typedef ignored ... when no variable is declared" warning by vc14
@@ -433,7 +433,7 @@ public:
     NoCopy() {}
 };
 
-#if HARNESS_TBBMALLOC_THREAD_SHUTDOWN && __TBB_SOURCE_DIRECTLY_INCLUDED && (_WIN32||defined(_WIN64))
+#if HARNESS_TBBMALLOC_THREAD_SHUTDOWN && __TBB_SOURCE_DIRECTLY_INCLUDED && (_WIN32||_WIN64)
 #include "../tbbmalloc/tbbmalloc_internal_api.h"
 #endif
 
@@ -448,7 +448,7 @@ public:
 
     //! Start task
     void start() {
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
         unsigned thread_id;
 #if __TBB_WIN8UI_SUPPORT
         std::thread* thread_tmp=new std::thread(thread_function, this);
@@ -495,12 +495,12 @@ public:
 #if __ICC==1100
     #pragma warning (pop)
 #endif
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
     }
 
     //! Wait for task to finish
     void wait_to_finish() {
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
         DWORD status = WaitForSingleObjectEx( thread_handle, INFINITE, FALSE );
         ASSERT( status!=WAIT_FAILED, "WaitForSingleObject failed" );
         CloseHandle( thread_handle );
@@ -514,7 +514,7 @@ public:
     }
 
 private:
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     HANDLE thread_handle;
 #else
     pthread_t thread_id;
@@ -526,7 +526,7 @@ private:
     //! Body to invoke over the range.
     const Body body;
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     static unsigned __stdcall thread_function( void* object )
 #else
     static void* thread_function(void* object)
@@ -534,7 +534,7 @@ private:
     {
         NativeParallelForTask& self = *static_cast<NativeParallelForTask*>(object);
         (self.body)(self.index);
-#if HARNESS_TBBMALLOC_THREAD_SHUTDOWN && __TBB_SOURCE_DIRECTLY_INCLUDED && (_WIN32||defined(_WIN64))
+#if HARNESS_TBBMALLOC_THREAD_SHUTDOWN && __TBB_SOURCE_DIRECTLY_INCLUDED && (_WIN32||_WIN64)
         // in those cases can't release per-thread cache automatically,
         // so do it manually
         // TODO: investigate less-intrusive way to do it, for example via FLS keys
@@ -663,7 +663,7 @@ public:
 }; // NoAfterlife
 #endif /* !HARNESS_NO_ASSERT */
 
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
     void Sleep ( int ms ) {
 #if !__TBB_WIN8UI_SUPPORT
         ::Sleep(ms);

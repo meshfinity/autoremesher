@@ -71,7 +71,7 @@ bool __TBB_InitOnce::InitializationDone;
     static bool ITT_InitializationDone;
 #endif
 
-#if !(_WIN32||defined(_WIN64)) || __TBB_SOURCE_DIRECTLY_INCLUDED
+#if !(_WIN32||_WIN64) || __TBB_SOURCE_DIRECTLY_INCLUDED
     static __TBB_InitOnce __TBB_InitOnceHiddenInstance;
 #endif
 
@@ -178,7 +178,7 @@ static void ITT_init_domains() {
 
 static void ITT_init_strings() {
     for ( int i = 0; i < NUM_STRINGS; ++i ) {
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
         strings_for_itt[i].itt_str_handle = __itt_string_handle_createA( strings_for_itt[i].str );
 #else
         strings_for_itt[i].itt_str_handle = __itt_string_handle_create( strings_for_itt[i].str );
@@ -243,7 +243,7 @@ void DoOneTimeInitializations() {
     __TBB_InitOnce::unlock();
 }
 
-#if (_WIN32||defined(_WIN64)) && !__TBB_SOURCE_DIRECTLY_INCLUDED
+#if (_WIN32||_WIN64) && !__TBB_SOURCE_DIRECTLY_INCLUDED
 //! Windows "DllMain" that handles startup and shutdown of dynamic library.
 extern "C" bool WINAPI DllMain( HANDLE /*hinstDLL*/, DWORD reason, LPVOID /*lpvReserved*/ ) {
     switch( reason ) {
@@ -265,7 +265,7 @@ extern "C" bool WINAPI DllMain( HANDLE /*hinstDLL*/, DWORD reason, LPVOID /*lpvR
     }
     return true;
 }
-#endif /* (_WIN32||defined(_WIN64)) && !__TBB_SOURCE_DIRECTLY_INCLUDED */
+#endif /* (_WIN32||_WIN64) && !__TBB_SOURCE_DIRECTLY_INCLUDED */
 
 void itt_store_pointer_with_release_v3( void* dst, void* src ) {
     ITT_NOTIFY(sync_releasing, dst);
@@ -331,7 +331,7 @@ void itt_metadata_str_add_v7( itt_domain_enum domain, void *addr, unsigned long 
         itt_id_make( &id, addr, addr_extra );
         __itt_string_handle *k = ITT_get_string_handle(key);
        size_t value_length = strlen( value );
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
         ITTNOTIFY_VOID_D4(metadata_str_addA, d, id, k, value, value_length);
 #else
         ITTNOTIFY_VOID_D4(metadata_str_add, d, id, k, value, value_length);

@@ -25,7 +25,7 @@
 
 #if DO_ITT_NOTIFY
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     #ifndef UNICODE
         #define UNICODE
     #endif
@@ -39,7 +39,7 @@
 #include "tools_api/legacy/ittnotify.h"
 extern "C" void __itt_fini_ittlib(void);
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     #undef _T
     #undef __itt_event_create
     #define __itt_event_create __itt_event_createA
@@ -54,7 +54,7 @@ extern "C" void __itt_fini_ittlib(void);
 
 namespace tbb {
 //! Unicode support
-#if (_WIN32||defined(_WIN64)) && !__MINGW32__
+#if (_WIN32||_WIN64) && !__MINGW32__
     //! Unicode character type. Always wchar_t on Windows.
     /** We do not use typedefs from Windows TCHAR family to keep consistence of TBB coding style. **/
     typedef wchar_t tchar;

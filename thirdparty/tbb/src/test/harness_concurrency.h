@@ -21,7 +21,7 @@
 #ifndef tbb_tests_harness_concurrency_H
 #define tbb_tests_harness_concurrency_H
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #include "tbb/machine/windows_api.h"
 #elif __linux__
 #include <unistd.h>
@@ -42,7 +42,7 @@ namespace Harness {
     static int maxProcs = 0;
     static int GetMaxProcs() {
         if ( !maxProcs ) {
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
             SYSTEM_INFO si;
             GetNativeSystemInfo(&si);
             maxProcs = si.dwNumberOfProcessors;
@@ -62,7 +62,7 @@ namespace Harness {
             // Suppose that process mask is not set so the number of available threads equals maxProcs
             return maxProcs;
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
         ASSERT( max_threads <= 64 , "LimitNumberOfThreads doesn't support max_threads to be more than 64 on Windows." );
         DWORD_PTR mask = 1;
         for ( int i = 1; i < max_threads; ++i )

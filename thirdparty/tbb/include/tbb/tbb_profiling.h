@@ -52,9 +52,9 @@ namespace tbb {
 }
 
 // Check if the tools support is enabled
-#if (_WIN32||defined(_WIN64)||__linux__) && !__MINGW32__ && TBB_USE_THREADING_TOOLS
+#if (_WIN32||_WIN64||__linux__) && !__MINGW32__ && TBB_USE_THREADING_TOOLS
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #include <stdlib.h>  /* mbstowcs_s */
 #endif
 #include "tbb_stddef.h"
@@ -62,7 +62,7 @@ namespace tbb {
 namespace tbb {
     namespace internal {
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
         void __TBB_EXPORTED_FUNC itt_set_sync_name_v3( void *obj, const wchar_t* name );
         inline size_t multibyte_to_widechar( wchar_t* wcs, const char* mbs, size_t bufsize) {
 #if _MSC_VER>=1400
@@ -85,7 +85,7 @@ namespace tbb {
 //! Macro __TBB_DEFINE_PROFILING_SET_NAME(T) defines "set_name" methods for sync objects of type T
 /** Should be used in the "tbb" namespace only.
     Don't place semicolon after it to avoid compiler warnings. **/
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     #define __TBB_DEFINE_PROFILING_SET_NAME(sync_object_type)                       \
         namespace profiling {                                                       \
             inline void set_name( sync_object_type& obj, const wchar_t* name ) {    \
@@ -110,7 +110,7 @@ namespace tbb {
 
 #else /* no tools support */
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     #define __TBB_DEFINE_PROFILING_SET_NAME(sync_object_type)               \
         namespace profiling {                                               \
             inline void set_name( sync_object_type&, const wchar_t* ) {}    \

@@ -42,7 +42,7 @@
     #pragma warning( pop )
 #endif
 
-#if __INTEL_COMPILER && (_WIN32 || defined(_WIN64)) && TBB_USE_DEBUG && _CPPLIB_VER<520
+#if __INTEL_COMPILER && (_WIN32 || _WIN64) && TBB_USE_DEBUG && _CPPLIB_VER<520
 // The Intel Compiler has an issue that causes the Microsoft Iterator
 // Debugging code to crash in vector::pop_back when it is called after a
 // vector::push_back throws an exception.

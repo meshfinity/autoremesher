@@ -27,7 +27,7 @@ int                         g_sizex, g_sizey;
 static video *g_video = 0;
 static int g_fps = 0;
 
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
 
 static DWORD g_msec = 0;
 
@@ -42,7 +42,7 @@ void video::win_load_accelerators(int idc)  { }
 #include <sched.h>
 #include <sys/time.h>
 struct timeval g_time;
-#endif //_WIN32||defined(_WIN64)
+#endif //_WIN32||_WIN64
 
 #define CALC_FPS_ENABLED ((WINAPI_FAMILY != WINAPI_FAMILY_APP) && (!__ANDROID__))
 
@@ -74,7 +74,7 @@ void video::terminate()
 #if CALC_FPS_ENABLED
     if(calc_fps) {
         double fps = g_fps;
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
         fps /= (GetTickCount()-g_msec)/1000.0;
 #else
         struct timezone tz; struct timeval end_time; gettimeofday(&end_time, &tz);
@@ -98,7 +98,7 @@ bool video::next_frame()
 #if CALC_FPS_ENABLED
     if(calc_fps){
         if(!g_fps) {
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
             g_msec = GetTickCount();
 #else
             struct timezone tz; gettimeofday(&g_time, &tz);

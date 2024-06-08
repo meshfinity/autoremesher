@@ -28,7 +28,7 @@
 
 const char *globalCallMsg = "A TBB allocator function call is resolved into wrong implementation.";
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 // must be defined in DLL for linker to not drop the dependency on the DLL.
 extern "C" {
     extern __declspec(dllexport) void *scalable_malloc(size_t);
@@ -130,7 +130,7 @@ extern "C" size_t safer_scalable_msize (void *, size_t (*)(void*))
 #include "harness_memory.h"
 
 extern "C" {
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 extern __declspec(dllimport)
 #endif
 void *scalable_malloc(size_t);
@@ -169,7 +169,7 @@ struct Run {
         free_ptr(p);
 
         CloseLibrary(lib);
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
         ASSERT(GetModuleHandle(actual_name),
                "allocator library must not be unloaded");
 #else

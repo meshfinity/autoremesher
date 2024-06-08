@@ -25,7 +25,7 @@
 #define HARNESS_SKIP_TEST 1
 #else
 
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
 #include "tbb/machine/windows_api.h"
 #else
 #include <dlfcn.h>
@@ -42,7 +42,7 @@ namespace Harness {
 #define SUFFIX2 "_debug"
 #endif /* TBB_USE_DEBUG */
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #define PREFIX
 #define EXT ".dll"
 #else
@@ -63,13 +63,13 @@ namespace Harness {
 #define MALLOCLIB_NAME1 PREFIX "tbbmalloc" SUFFIX1 EXT
 #define MALLOCLIB_NAME2 PREFIX "tbbmalloc" SUFFIX2 EXT
 
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
 typedef  HMODULE LIBRARY_HANDLE;
 #else
 typedef void *LIBRARY_HANDLE;
 #endif
 
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
 #define TEST_LIBRARY_NAME(base) base".dll"
 #elif __APPLE__
 #define TEST_LIBRARY_NAME(base) base".dylib"
@@ -79,7 +79,7 @@ typedef void *LIBRARY_HANDLE;
 
 LIBRARY_HANDLE OpenLibrary(const char *name)
 {
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
 #if __TBB_WIN8UI_SUPPORT
     TCHAR wlibrary[MAX_PATH];
     if ( MultiByteToWideChar(CP_UTF8, 0, name, -1, wlibrary, MAX_PATH) == 0 ) return false;
@@ -94,7 +94,7 @@ LIBRARY_HANDLE OpenLibrary(const char *name)
 
 void CloseLibrary(LIBRARY_HANDLE lib)
 {
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
     BOOL ret = FreeLibrary(lib);
     ASSERT(ret, "FreeLibrary must be successful");
 #else
@@ -108,7 +108,7 @@ typedef void (*FunctionAddress)();
 FunctionAddress GetAddress(Harness::LIBRARY_HANDLE lib, const char *name)
 {
     union { FunctionAddress func; void *symb; } converter;
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
     converter.symb = (void*)GetProcAddress(lib, name);
 #else
     converter.symb = (void*)dlsym(lib, name);

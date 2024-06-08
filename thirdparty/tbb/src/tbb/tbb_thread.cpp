@@ -18,7 +18,7 @@
 
 */
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #include <process.h>        // _beginthreadex()
 #endif
 #include <errno.h>
@@ -53,7 +53,7 @@ void tbb_thread_v3::join()
         handle_perror( EINVAL, "tbb_thread::join" ); // Invalid argument
     if (this_tbb_thread::get_id() == get_id())
         handle_perror( EDEADLK, "tbb_thread::join" ); // Resource deadlock avoided
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #if __TBB_WIN8UI_SUPPORT
     std::thread* thread_tmp=(std::thread*)my_thread_id;
     thread_tmp->join();
@@ -71,14 +71,14 @@ void tbb_thread_v3::join()
     int status = pthread_join( my_handle, NULL );
     if( status )
         handle_perror( status, "pthread_join" );
-#endif // _WIN32||defined(_WIN64)
+#endif // _WIN32||_WIN64
     my_handle = 0;
 }
 
 void tbb_thread_v3::detach() {
     if (!joinable())
         handle_perror( EINVAL, "tbb_thread::detach" ); // Invalid argument
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     BOOL status = CloseHandle( my_handle );
     if ( status == 0 )
       handle_win_error( GetLastError() );
@@ -87,13 +87,13 @@ void tbb_thread_v3::detach() {
     int status = pthread_detach( my_handle );
     if( status )
         handle_perror( status, "pthread_detach" );
-#endif // _WIN32||defined(_WIN64)
+#endif // _WIN32||_WIN64
     my_handle = 0;
 }
 
 void tbb_thread_v3::internal_start( __TBB_NATIVE_THREAD_ROUTINE_PTR(start_routine),
                                     void* closure ) {
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #if __TBB_WIN8UI_SUPPORT
     std::thread* thread_tmp=new std::thread(start_routine, closure);
     my_handle  = thread_tmp->native_handle();
@@ -133,7 +133,7 @@ void tbb_thread_v3::internal_start( __TBB_NATIVE_THREAD_ROUTINE_PTR(start_routin
         handle_perror( status, "pthread_attr_destroy" );
 
     my_handle = thread_handle;
-#endif // _WIN32||defined(_WIN64)
+#endif // _WIN32||_WIN64
 }
 
 unsigned tbb_thread_v3::hardware_concurrency() __TBB_NOEXCEPT(true) {
@@ -141,11 +141,11 @@ unsigned tbb_thread_v3::hardware_concurrency() __TBB_NOEXCEPT(true) {
 }
 
 tbb_thread_v3::id thread_get_id_v3() {
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     return tbb_thread_v3::id( GetCurrentThreadId() );
 #else
     return tbb_thread_v3::id( pthread_self() );
-#endif // _WIN32||defined(_WIN64)
+#endif // _WIN32||_WIN64
 }
 
 void move_v3( tbb_thread_v3& t1, tbb_thread_v3& t2 )
@@ -154,10 +154,10 @@ void move_v3( tbb_thread_v3& t1, tbb_thread_v3& t2 )
         t1.detach();
     t1.my_handle = t2.my_handle;
     t2.my_handle = 0;
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     t1.my_thread_id = t2.my_thread_id;
     t2.my_thread_id = 0;
-#endif // _WIN32||defined(_WIN64)
+#endif // _WIN32||_WIN64
 }
 
 void thread_yield_v3()
@@ -167,7 +167,7 @@ void thread_yield_v3()
 
 void thread_sleep_v3(const tick_count::interval_t &i)
 {
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
      tick_count t0 = tick_count::now();
      tick_count t1 = t0;
      for(;;) {
@@ -189,7 +189,7 @@ void thread_sleep_v3(const tick_count::interval_t &i)
     req.tv_sec = static_cast<long>(sec);
     req.tv_nsec = static_cast<long>( (sec - req.tv_sec)*1e9 );
     nanosleep(&req, NULL);
-#endif // _WIN32||defined(_WIN64)
+#endif // _WIN32||_WIN64
 }
 
 } // internal

@@ -22,7 +22,7 @@
 #define _itt_shared_malloc_TypeDefinitions_H_
 
 // Define preprocessor symbols used to determine architecture
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #   if defined(_M_X64)||defined(__x86_64__)  // the latter for MinGW support
 #       define __ARCH_x86_64 1
 #   elif defined(_M_IA64)

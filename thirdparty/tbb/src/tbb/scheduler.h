@@ -463,12 +463,12 @@ public:
     }
 #endif /* __TBB_TASK_GROUP_CONTEXT */
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 private:
     //! Handle returned by RML when registering a master with RML
     ::rml::server::execution_resource_t master_exec_resource;
 public:
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 
 #if __TBB_TASK_GROUP_CONTEXT
     //! Flag indicating that a context is being destructed by non-owner thread.

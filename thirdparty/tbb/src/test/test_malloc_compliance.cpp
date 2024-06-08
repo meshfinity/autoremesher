@@ -37,7 +37,7 @@ int TestMain() {
 }
 #else /* __TBB_WIN8UI_SUPPORT	 */
 
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
 /* _WIN32_WINNT should be defined at the very beginning,
    because other headers might include <windows.h>
 */
@@ -75,7 +75,7 @@ void limitMem( size_t limit )
     }
 }
 // Do not test errno with static VC runtime
-#else // _WIN32 || defined(_WIN64)
+#else // _WIN32 || _WIN64
 #include <sys/resource.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -101,7 +101,7 @@ void limitMem( size_t limit )
         exit(1);
     }
 }
-#endif  // _WIN32 || defined(_WIN64)
+#endif  // _WIN32 || _WIN64
 
 #define ASSERT_ERRNO(cond, msg)  ASSERT( !__tbb_test_errno || (cond), msg )
 #define CHECK_ERRNO(cond) (__tbb_test_errno && (cond))
@@ -122,7 +122,7 @@ void limitMem( size_t limit )
 #if __linux__
 #include <stdint.h> // uintptr_t
 #endif
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
 #include <malloc.h> // _aligned_(malloc|free|realloc)
 #if __MINGW64__
 // Workaround a bug in MinGW64 headers with _aligned_(malloc|free) not declared by default
@@ -266,7 +266,7 @@ static void setSystemAllocs()
     Rrealloc=realloc;
     Rcalloc=calloc;
     Tfree=free;
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
     Raligned_malloc=_aligned_malloc;
     Raligned_realloc=_aligned_realloc;
     Taligned_free=_aligned_free;

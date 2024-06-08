@@ -767,7 +767,7 @@ ALWAYSINLINE( bool isMallocInitialized() );
  * This is enough for current algorithm of distribution of sizes among bins.
  * __TBB_Log2 is not used here to minimize dependencies on TBB specific sources.
  */
-#if defined(_WIN64) && _MSC_VER>=1400 && !__INTEL_COMPILER
+#if _WIN64 && _MSC_VER>=1400 && !__INTEL_COMPILER
 extern "C" unsigned char _BitScanReverse( unsigned long* i, unsigned long w );
 #pragma intrinsic(_BitScanReverse)
 #endif

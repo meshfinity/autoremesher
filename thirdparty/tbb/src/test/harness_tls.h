@@ -19,7 +19,7 @@
 */
 
 class LimitTLSKeysTo {
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
     #if __TBB_WIN8UI_SUPPORT && !defined(TLS_OUT_OF_INDEXES)
         // for SDKs for Windows*8 Store Apps that did not redirect TLS to FLS
         #define TlsAlloc() FlsAlloc(NULL)
@@ -27,7 +27,7 @@ class LimitTLSKeysTo {
         #define TLS_OUT_OF_INDEXES FLS_OUT_OF_INDEXES
     #endif
     typedef DWORD handle;
-#else // _WIN32 || defined(_WIN64)
+#else // _WIN32 || _WIN64
     typedef pthread_key_t handle;
 #endif
     // for platforms that not limit number of TLS keys, set artificial limit
@@ -37,7 +37,7 @@ class LimitTLSKeysTo {
 public:
     LimitTLSKeysTo(int keep_keys) {
         for (lastUsedIdx=0; lastUsedIdx<LIMIT; lastUsedIdx++) {
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
             handle h = TlsAlloc();
             if (h==TLS_OUT_OF_INDEXES)
 #else
@@ -47,7 +47,7 @@ public:
             {
                 break;
             }
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
             handles[lastUsedIdx] = h;
 #else
             pthread_setspecific(handles[lastUsedIdx], &setspecific_dummy);
@@ -56,7 +56,7 @@ public:
         lastUsedIdx--;
         ASSERT(lastUsedIdx >= keep_keys-1, "Less TLS keys are available than requested");
         for (; keep_keys>0; keep_keys--, lastUsedIdx--) {
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
             TlsFree(handles[lastUsedIdx]);
 #else
             int ret = pthread_key_delete(handles[lastUsedIdx]);
@@ -67,7 +67,7 @@ public:
     }
     ~LimitTLSKeysTo() {
         for (int i=0; i<=lastUsedIdx; i++) {
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
             TlsFree(handles[i]);
 #else
             int ret = pthread_key_delete(handles[i]);

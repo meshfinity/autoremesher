@@ -656,13 +656,13 @@ public:
     /** Returns true if state is successfully changed.  's' takes either ts_omp_busy or ts_tbb_busy */
     bool try_grab_for( thread_state_t s );
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     //! Send the worker thread to sleep temporarily
     void deactivate();
 
     //! Wake the worker thread up
     void reactivate();
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 };
 
 //! Bag of threads that are private to a client.
@@ -1100,7 +1100,7 @@ struct connection_traits<tbb_server,tbb_client> {
 class tbb_connection_v2: public generic_connection<tbb_server,tbb_client> {
     void adjust_job_count_estimate( int delta ) __TBB_override;
 #if !RML_USE_WCRM
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     void register_master ( rml::server::execution_resource_t& /*v*/ ) __TBB_override {}
     void unregister_master ( rml::server::execution_resource_t /*v*/ ) __TBB_override {}
 #endif
@@ -1235,7 +1235,7 @@ class omp_connection_v2: public generic_connection<omp_server,omp_client> {
     void decrease_load( size_type n ) __TBB_override;
     void get_threads( size_type request_size, void* cookie, job* array[] ) __TBB_override;
 #if !RML_USE_WCRM
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     void register_master ( rml::server::execution_resource_t& /*v*/ ) __TBB_override {}
     void unregister_master ( rml::server::execution_resource_t /*v*/ ) __TBB_override {}
 #endif
@@ -1246,10 +1246,10 @@ class omp_connection_v2: public generic_connection<omp_server,omp_client> {
     }
     void unregister_master ( rml::server::execution_resource_t v ) __TBB_override { my_thread_map.unregister(v); }
 #endif /* !RML_USE_WCRM */
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     void deactivate( rml::job* j ) __TBB_override;
     void reactivate( rml::job* j ) __TBB_override;
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 #if RML_USE_WCRM
 public:
     typedef omp_server_thread server_thread_type;
@@ -1654,7 +1654,7 @@ activate_threads:
     }
 }
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 void omp_connection_v2::deactivate( rml::job* j )
 {
     my_thread_map.adjust_balance(1);
@@ -1672,7 +1672,7 @@ void omp_connection_v2::reactivate( rml::job* j )
     omp_server_thread* thr = (omp_server_thread*) scratch_ptr( *j );
     (thr->get_virtual_processor())->Activate( thr );
 }
-#endif /* !_WIN32||defined(_WIN64) */
+#endif /* !_WIN32||_WIN64 */
 
 #endif  /* RML_USE_WCRM */
 
@@ -1845,7 +1845,7 @@ void omp_dispatch_type::consume() {
 }
 
 #if !RML_USE_WCRM
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 void omp_connection_v2::deactivate( rml::job* j )
 {
 #if TBB_USE_ASSERT
@@ -1864,7 +1864,7 @@ void omp_connection_v2::reactivate( rml::job* j )
     server_thread* thr = (server_thread*) scratch_ptr( *j );
     thr->reactivate();
 }
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 
 //------------------------------------------------------------------------
 // Methods of server_thread
@@ -1975,7 +1975,7 @@ bool server_thread::try_grab_for( thread_state_t target_state ) {
     return success;
 }
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 void server_thread::deactivate() {
     thread_state_t es = (thread_state_t) my_extra_state.fetch_and_store( ts_deactivated );
     __TBB_ASSERT( my_extra_state==ts_deactivated, "someone else tampered with my_extra_state?" );
@@ -2010,7 +2010,7 @@ void server_thread::reactivate() {
             __TBB_Yield();
     }
 }
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 
 
 template<typename Connection>
@@ -3203,7 +3203,7 @@ extern "C" factory::status_type __RML_open_factory( factory& f, version_type& se
     static tbb::atomic<bool> one_time_flag;
     if( one_time_flag.compare_and_swap(true,false)==false) {
         __TBB_ASSERT( (size_t)f.library_handle!=factory::c_dont_unload, NULL );
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
         f.library_handle = reinterpret_cast<HMODULE>(factory::c_dont_unload);
 #else
         f.library_handle = reinterpret_cast<void*>(factory::c_dont_unload);

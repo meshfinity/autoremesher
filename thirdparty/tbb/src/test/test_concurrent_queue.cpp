@@ -418,7 +418,7 @@ void TestPushPop( size_t prefill, ptrdiff_t capacity, int nthread ) {
         if( nthread>1 && prefill==0 ) {
             // Check that pop_if_present got sufficient exercise
             for( int k=0; k<2; ++k ) {
-#if (_WIN32||defined(_WIN64))
+#if (_WIN32||_WIN64)
                 // The TBB library on Windows seems to have a tough time generating
                 // the desired interleavings for pop_if_present, so the code tries longer, and settles
                 // for fewer desired interleavings.
@@ -427,7 +427,7 @@ void TestPushPop( size_t prefill, ptrdiff_t capacity, int nthread ) {
 #else
                 const int min_requirement = 100;
                 const int max_trial = 20;
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
                 if( PopKind[k]<min_requirement ) {
                     if( trial>=max_trial ) {
                         if( Verbose )

@@ -250,7 +250,7 @@ void TestTooBigStack()
 #endif
     for (unsigned i = 0; i<Harness::array_length(stack_sizes); i++) {
         // as no stack size setting for Windows Store* apps, skip it
-#if TRY_BAD_EXPR_ENABLED && __TBB_x86_64 && (_WIN32 || defined(_WIN64)) && !__TBB_WIN8UI_SUPPORT
+#if TRY_BAD_EXPR_ENABLED && __TBB_x86_64 && (_WIN32 || _WIN64) && !__TBB_WIN8UI_SUPPORT
         if (stack_sizes[i] != (unsigned)stack_sizes[i]) {
             size_t curr_ss = tbb::global_control::active_value(tbb::global_control::thread_stack_size);
             tbb::set_assertion_handler( AssertionFailureHandler );

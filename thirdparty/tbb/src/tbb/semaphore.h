@@ -23,7 +23,7 @@
 
 #include "tbb/tbb_stddef.h"
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #include "tbb/machine/windows_api.h"
 
 #elif __APPLE__
@@ -37,13 +37,13 @@
 #ifdef TBB_USE_DEBUG
 #include <errno.h>
 #endif
-#endif /*_WIN32||defined(_WIN64)*/
+#endif /*_WIN32||_WIN64*/
 
 namespace tbb {
 namespace internal {
 
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 typedef LONG sem_count_t;
 //! Edsger Dijkstra's counting semaphore
 class semaphore : no_copy {
@@ -118,11 +118,11 @@ private:
         __TBB_ASSERT_EX( !ret, NULL );
     }
 };
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 
 
 //! for performance reasons, we want specialized binary_semaphore
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #if !__TBB_USE_SRWLOCK
 //! binary_semaphore for concurrent_monitor
 class binary_semaphore : no_copy {
@@ -246,7 +246,7 @@ private:
     sem_t my_sem;
 };
 #endif /* __TBB_USE_FUTEX */
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 
 } // namespace internal
 } // namespace tbb

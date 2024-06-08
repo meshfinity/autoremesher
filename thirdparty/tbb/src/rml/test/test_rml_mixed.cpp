@@ -129,7 +129,7 @@ public:
     Factory factory;
     Client* client;
     typename Factory::server_type* server;
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     ::rml::server::execution_resource_t me;
 #endif
     RunTime() {
@@ -216,16 +216,16 @@ void RunTime<Factory,Client>::create_connection() {
     client = new Client;
     typename Factory::status_type status = factory.make_server( server, *client );
     ASSERT( status==Factory::st_success, NULL );
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     server->register_master( me );
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 }
 
 template<typename Factory, typename Client>
 void RunTime<Factory,Client>::destroy_connection() {
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     server->unregister_master( me );
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
     server->request_close_connection();
     server = NULL;
 }

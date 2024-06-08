@@ -302,7 +302,7 @@ public:
     //! Reports active parallelism level according to user's settings
     static unsigned app_parallelism_limit();
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     //! register master with the resource manager
     void register_master( ::rml::server::execution_resource_t& rsc_handle ) {
         __TBB_ASSERT( my_server, "RML server not defined?" );

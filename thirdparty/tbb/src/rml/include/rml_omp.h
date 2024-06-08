@@ -63,7 +63,7 @@ public:
       
        Note: conversion between a coin and a thread does not affect the accounting.
      */
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     //! Inform server of a tbb master thread.
     virtual void register_master( execution_resource_t& /*v*/ ) = 0;
 
@@ -76,7 +76,7 @@ public:
 
     //! reactivate
     virtual void reactivate( job* ) = 0;
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 };
 
 

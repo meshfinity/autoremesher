@@ -200,10 +200,10 @@ public:
 
     void adjust_job_count_estimate( int delta ) __TBB_override;
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     void register_master ( ::rml::server::execution_resource_t& ) __TBB_override {}
     void unregister_master ( ::rml::server::execution_resource_t ) __TBB_override {}
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 };
 
 //------------------------------------------------------------------------

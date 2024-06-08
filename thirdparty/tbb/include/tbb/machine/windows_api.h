@@ -21,7 +21,7 @@
 #ifndef __TBB_machine_windows_api_H
 #define __TBB_machine_windows_api_H
 
-#if _WIN32 || defined(_WIN64)
+#if _WIN32 || _WIN64
 
 #if _XBOX
 
@@ -74,6 +74,6 @@ inline HANDLE WINAPI inlineCreateEventEx( LPSECURITY_ATTRIBUTES lpEventAttribute
 
 #else
 #error tbb/machine/windows_api.h should only be used for Windows based platforms
-#endif // _WIN32 || defined(_WIN64)
+#endif // _WIN32 || _WIN64
 
 #endif // __TBB_machine_windows_api_H

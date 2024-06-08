@@ -21,11 +21,11 @@
 #ifndef __TBB_mutex_H
 #define __TBB_mutex_H
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #include "machine/windows_api.h"
 #else
 #include <pthread.h>
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 
 #include <new>
 #include "aligned_space.h"
@@ -43,13 +43,13 @@ public:
 #if TBB_USE_ASSERT || TBB_USE_THREADING_TOOLS
     internal_construct();
 #else
-  #if _WIN32||defined(_WIN64)
+  #if _WIN32||_WIN64
         InitializeCriticalSectionEx(&impl, 4000, 0);
   #else
         int error_code = pthread_mutex_init(&impl,NULL);
         if( error_code )
             tbb::internal::handle_perror(error_code,"mutex: pthread_mutex_init failed");
-  #endif /* _WIN32||defined(_WIN64)*/
+  #endif /* _WIN32||_WIN64*/
 #endif /* TBB_USE_ASSERT */
     };
 
@@ -57,12 +57,12 @@ public:
 #if TBB_USE_ASSERT
         internal_destroy();
 #else
-  #if _WIN32||defined(_WIN64)
+  #if _WIN32||_WIN64
         DeleteCriticalSection(&impl);
   #else
         pthread_mutex_destroy(&impl);
 
-  #endif /* _WIN32||defined(_WIN64) */
+  #endif /* _WIN32||_WIN64 */
 #endif /* TBB_USE_ASSERT */
     };
 
@@ -149,13 +149,13 @@ public:
         aligned_space<scoped_lock> tmp;
         new(tmp.begin()) scoped_lock(*this);
 #else
-  #if _WIN32||defined(_WIN64)
+  #if _WIN32||_WIN64
         EnterCriticalSection(&impl);
   #else
         int error_code = pthread_mutex_lock(&impl);
         if( error_code )
             tbb::internal::handle_perror(error_code,"mutex: pthread_mutex_lock failed");
-  #endif /* _WIN32||defined(_WIN64) */
+  #endif /* _WIN32||_WIN64 */
 #endif /* TBB_USE_ASSERT */
     }
 
@@ -168,11 +168,11 @@ public:
         s.my_mutex = NULL;
         return s.internal_try_acquire(*this);
 #else
-  #if _WIN32||defined(_WIN64)
+  #if _WIN32||_WIN64
         return TryEnterCriticalSection(&impl)!=0;
   #else
         return pthread_mutex_trylock(&impl)==0;
-  #endif /* _WIN32||defined(_WIN64) */
+  #endif /* _WIN32||_WIN64 */
 #endif /* TBB_USE_ASSERT */
     }
 
@@ -184,16 +184,16 @@ public:
         s.my_mutex = this;
         s.internal_release();
 #else
-  #if _WIN32||defined(_WIN64)
+  #if _WIN32||_WIN64
         LeaveCriticalSection(&impl);
   #else
         pthread_mutex_unlock(&impl);
-  #endif /* _WIN32||defined(_WIN64) */
+  #endif /* _WIN32||_WIN64 */
 #endif /* TBB_USE_ASSERT */
     }
 
     //! Return native_handle
-  #if _WIN32||defined(_WIN64)
+  #if _WIN32||_WIN64
     typedef LPCRITICAL_SECTION native_handle_type;
   #else
     typedef pthread_mutex_t* native_handle_type;
@@ -206,12 +206,12 @@ public:
         HELD=0x56CD
     };
 private:
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     CRITICAL_SECTION impl;
     enum state_t state;
 #else
     pthread_mutex_t impl;
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 
     //! All checks from mutex constructor using mutex.state were moved here
     void __TBB_EXPORTED_METHOD internal_construct();
@@ -219,7 +219,7 @@ private:
     //! All checks from mutex destructor using mutex.state were moved here
     void __TBB_EXPORTED_METHOD internal_destroy();
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 public:
     //!  Set the internal state
     void set_state( state_t to ) { state = to; }

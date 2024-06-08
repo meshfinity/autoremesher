@@ -32,7 +32,7 @@
 #include "tbb_profiling.h"
 #include <string.h>  // for memcpy
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #include "machine/windows_api.h"
 #else
 #include <pthread.h>
@@ -244,7 +244,7 @@ namespace interface6 {
         template <>
         class ets_base<ets_key_per_instance>: protected ets_base<ets_no_key> {
             typedef ets_base<ets_no_key> super;
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #if __TBB_WIN8UI_SUPPORT
             typedef DWORD tls_key_t;
             void create_key() { my_key = FlsAlloc(NULL); }

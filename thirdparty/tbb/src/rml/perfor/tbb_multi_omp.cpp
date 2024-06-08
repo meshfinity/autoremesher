@@ -35,18 +35,18 @@
 #include "tbb/task_scheduler_init.h"
 #include "tbb/scalable_allocator.h"
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #include <Windows.h> /* Need Sleep */
 #else
 #include <unistd.h>  /* Need usleep */
 #endif
 
 void MilliSleep( unsigned milliseconds ) {
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
     Sleep( milliseconds );
 #else
     usleep( milliseconds*1000 );
-#endif /* _WIN32||defined(_WIN64) */
+#endif /* _WIN32||_WIN64 */
 }
 
 using namespace std;

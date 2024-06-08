@@ -32,7 +32,7 @@
 // __TBB_malloc_safer_msize() returns 0 for unknown objects,
 // thus we can detect ownership
 #if _USRDLL
- #if _WIN32||defined(_WIN64)
+ #if _WIN32||_WIN64
 extern __declspec(dllexport)
  #endif
 bool dll_isMallocOverloaded()
@@ -140,7 +140,7 @@ static Foo f;
 #else // _USRDLL
 #include "harness.h"
 
-#if _WIN32||defined(_WIN64)
+#if _WIN32||_WIN64
 #include "tbb/tbbmalloc_proxy.h"
 
 extern __declspec(dllimport)
