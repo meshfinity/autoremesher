@@ -26,13 +26,6 @@ if(APPLE)
   set(CMAKE_MACOSX_RPATH ON)
 endif()
 
-if(CMAKE_SYSTEM_NAME MATCHES "MSYS")
-  set(WIN32 ON)
-  set(MINGW ON)
-  add_definitions(-D_WIN64)
-  add_definitions(-D__MINGW64__)
-endif()
-
 file(GLOB tbb_src "${CMAKE_CURRENT_SOURCE_DIR}/src/tbb/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/old/*.cpp")
 list(APPEND tbb_src ${CMAKE_CURRENT_SOURCE_DIR}/src/rml/client/rml_tbb.cpp)
 file(GLOB to_remove "${CMAKE_CURRENT_SOURCE_DIR}/src/old/test*.cpp")
