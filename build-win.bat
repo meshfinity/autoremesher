@@ -34,7 +34,7 @@ cd %AUTOREMESHER_BUILD_DIR%
 curl -O https://archives.boost.io/release/1.66.0/source/boost_1_66_0.zip
 tar -xf boost_1_66_0.zip
 mkdir C:\Libraries
-xcopy boost_1_66_0 C:\Libraries\boost_1_66_0 /s /e
+echo D | xcopy boost_1_66_0 C:\Libraries\boost_1_66_0 /s /e /q /y
 
 cd thirdparty/openvdb/openvdb-7.0.0
 mkdir build
@@ -53,3 +53,11 @@ set QTDIR=C:\Qt\5.13.2\msvc2017_64
 set PATH=%PATH%;%QTDIR%\bin
 qmake "BOOST_INCLUDEDIR=C:\Libraries\boost_1_66_0" "CGAL_DIR=%AUTOREMESHER_BUILD_DIR%\thirdparty\cgal\CGAL-5.1-beta1"
 nmake -f Makefile.Release
+
+copy thirdparty\openvdb\openvdb-7.0.0\build\openvdb\Release\openvdb.dll release\openvdb.dll
+copy thirdparty\tbb\build2\Release\tbbmalloc_proxy.dll release\tbbmalloc_proxy.dll
+copy thirdparty\tbb\build2\Release\tbbmalloc.dll release\tbbmalloc.dll
+copy thirdparty\tbb\build2\Release\tbb.dll release\tbb.dll
+copy thirdparty\zlib\zlib-1.2.11\build\Release\zlib.dll release\zlib.dll
+copy thirdparty\cgal\CGAL-5.1-beta1\auxiliary\gmp\lib\libgmp-10.dll release\libgmp-10.dll
+copy thirdparty\cgal\CGAL-5.1-beta1\auxiliary\gmp\lib\libmpfr-4.dll release\libmpfr-4.dll

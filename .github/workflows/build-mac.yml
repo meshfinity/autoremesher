@@ -1,0 +1,24 @@
+name: Build AutoRemesher for macOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      tagName:
+        description: Tag name for release
+        required: true
+
+jobs:
+  build-mac:
+    name: Build AutoRemesher for macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+      - run: ./build-mac.sh
+      - run: find $HOME/autoremesher/autoremesher.app -name .DS_Store -delete
+      - run: ditto -c -k --sequesterRsrc --keepParent $HOME/autoremesher/autoremesher.app $HOME/autoremesher-${{ github.event.inputs.tagName }}-mac.zip
+      - uses: softprops/action-gh-release@v0.1.15
+        with:
+          tag_name: ${{ github.event.inputs.tagName }}
+          files: $HOME/autoremesher-${{ github.event.inputs.tagName }}-mac.zip

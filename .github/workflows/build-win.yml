@@ -1,0 +1,25 @@
+name: Build AutoRemesher for Windows
+
+on:
+  workflow_dispatch:
+    inputs:
+      tagName:
+        description: Tag name for release
+        required: true
+
+jobs:
+  build-win:
+    name: Build AutoRemesher for Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+      - run: .\build-win.bat
+        timeout-minutes: 30
+      - run: Rename-Item release -NewName autoremesher-${{ github.event.inputs.tagName }}-win
+      - run: Compress-Archive autoremesher-${{ github.event.inputs.tagName }}-win autoremesher-${{ github.event.inputs.tagName }}-win.zip
+      - uses: softprops/action-gh-release@v0.1.15
+        with:
+          tag_name: ${{ github.event.inputs.tagName }}
+          files: autoremesher-${{ github.event.inputs.tagName }}-win.zip
