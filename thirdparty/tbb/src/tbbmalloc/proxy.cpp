@@ -661,7 +661,7 @@ void doMallocReplacement()
 
         for (size_t i = 0; i < arrayLength(cxx_routines_to_replace); i++)
         {
-#if !defined(_WIN64)
+#if !_WIN64
             // in Microsoft* Visual Studio* 2012 and 2013 32-bit operator delete consists of 2 bytes only: short jump to free(ptr);
             // replacement should be skipped for this particular case.
             if ( ((strcmp(modules_to_replace[j].name, "msvcr110.dll") == 0) || (strcmp(modules_to_replace[j].name, "msvcr120.dll") == 0)) && (strcmp(cxx_routines_to_replace[i]._func, "??3@YAXPAX@Z") == 0) ) continue;

@@ -77,7 +77,7 @@ struct atomic_rep<2> {       // Specialization
 };
 template<>
 struct atomic_rep<4> {       // Specialization
-#if _MSC_VER && !defined(_WIN64)
+#if _MSC_VER && !_WIN64
     // Work-around that avoids spurious /Wp64 warnings
     typedef intptr_t word;
 #else
@@ -443,7 +443,7 @@ __TBB_DECL_ATOMIC(unsigned __TBB_LONG_LONG)
 __TBB_DECL_ATOMIC(long)
 __TBB_DECL_ATOMIC(unsigned long)
 
-#if _MSC_VER && !defined(_WIN64)
+#if _MSC_VER && !_WIN64
 #if __TBB_ATOMIC_CTORS
 /* Special version of __TBB_DECL_ATOMIC that avoids gratuitous warnings from cl /Wp64 option.
    It is identical to __TBB_DECL_ATOMIC(unsigned) except that it replaces operator=(T)
@@ -469,7 +469,7 @@ __TBB_DECL_ATOMIC_ALT(int,ptrdiff_t)
 #else
 __TBB_DECL_ATOMIC(unsigned)
 __TBB_DECL_ATOMIC(int)
-#endif /* _MSC_VER && !defined(_WIN64) */
+#endif /* _MSC_VER && !_WIN64 */
 
 __TBB_DECL_ATOMIC(unsigned short)
 __TBB_DECL_ATOMIC(short)

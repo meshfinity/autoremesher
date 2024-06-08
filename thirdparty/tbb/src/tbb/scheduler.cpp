@@ -150,7 +150,7 @@ void generic_scheduler::init_stack_info () {
     __TBB_ASSERT( !my_stealing_threshold, "Stealing threshold has already been calculated" );
     size_t  stack_size = my_market->worker_stack_size();
 #if USE_WINTHREAD
-#if defined(_MSC_VER)&&_MSC_VER<1400 && !defined(_WIN64)
+#if defined(_MSC_VER)&&_MSC_VER<1400 && !_WIN64
     NT_TIB  *pteb;
     __asm mov eax, fs:[0x18]
     __asm mov pteb, eax

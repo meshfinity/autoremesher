@@ -779,7 +779,7 @@ static inline unsigned int highestBitPos(unsigned int n)
 
 # if __linux__||__APPLE__||__FreeBSD__||__NetBSD__||__sun||__MINGW32__
     __asm__ ("bsr %1,%0" : "=r"(pos) : "r"(n));
-# elif (_WIN32 && (!defined(_WIN64) || __INTEL_COMPILER))
+# elif (_WIN32 && (!_WIN64 || __INTEL_COMPILER))
     __asm
     {
         bsr eax, n
