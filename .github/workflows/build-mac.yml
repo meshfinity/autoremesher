@@ -16,7 +16,7 @@ jobs:
         with:
           ref: master
       - run: NONINTERACTIVE=1 arch --x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      - run: arch --x86_64 /usr/local/Homebrew/bin/brew install boost c-blosc cgal cmake gcc make mpfr openvdb qt tbb zlib
+      - run: arch --x86_64 /usr/local/Homebrew/bin/brew install boost c-blosc cgal cmake gcc make mpfr openvdb qt tbb zlib || true # This returns exit code 1 even if successful - why ??
       - run: ./build-mac.sh
       - run: find $HOME/autoremesher/autoremesher.app -name .DS_Store -delete
       - run: ditto -c -k --sequesterRsrc --keepParent $HOME/autoremesher/autoremesher.app $HOME/autoremesher-${{ github.event.inputs.tagName }}-mac.zip
