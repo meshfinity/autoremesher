@@ -113,6 +113,7 @@ HEADERS += src/AutoRemesher/meshseparator.h
 SOURCES += src/AutoRemesher/relativeheight.cpp
 HEADERS += src/AutoRemesher/relativeheight.h
 
+SOURCES += src/tiny_obj_loader.cc
 HEADERS += src/tiny_obj_loader.h
 
 INCLUDEPATH += thirdparty/openvdb/openvdb-7.0.0

@@ -1,6 +1,7 @@
 #include <iostream>
-#define TINYOBJLOADER_IMPLEMENTATION
+#include <fstream>
 #include "tiny_obj_loader.h"
+#include <geogram/basic/common.h>
 #include <AutoRemesher/AutoRemesher>
 #include <AutoRemesher/Vector3>
 
@@ -52,22 +53,25 @@ bool loadObj(std::string const &filename, std::vector<AutoRemesher::Vector3> &ve
 
 static void reportProgressHandler(void *tag, float progress)
 {
-    // TODO
+    std::cout << "Progress: " << progress << "\n";
 }
 
 int main(int argc, char *argv[])
 {
-    /* if (argc < 3)
+    if (argc < 5)
     {
-        std::cout << "Usage: " << argv[0] << " [input filename] [output filename]\n";
+        std::cout << "Usage: " << argv[0] << " [input filename] [output filename] [edge scaling (suggested = 4)] [target triangle count (suggested = 65536)]\n";
         return -1;
     }
 
     std::string inFilename(argv[1]);
-    std::string outFilename(argv[2]); */
+    std::string outFilename(argv[2]);
+    double edgeScaling = std::stof(argv[3]);
+    int targetTriangleCount = std::stoi(argv[4]);
 
-    std::string inFilename = "/Users/nunya/dev/autoremesher/test-in.obj";
-    std::string outFilename = "/Users/nunya/dev/autoremesher/test-out.obj";
+    std::cout << "AutoRemesher\n===\nInput filename: " << inFilename << "\nOutput filename: " << outFilename << "\nEdge scaling: " << edgeScaling << "\nTarget triangle count: " << targetTriangleCount << "\n===\n\n";
+
+    GEO::initialize();
 
     std::vector<AutoRemesher::Vector3> inVertices;
     std::vector<std::vector<size_t>> inTriangles;
@@ -77,20 +81,35 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    std::cout << "inVertices " << inVertices.size() << " inTriangles " << inTriangles.size() << "\n";
-
     AutoRemesher::AutoRemesher remesher(inVertices, inTriangles);
-    // remesher.setScaling(2.0);
-    // remesher.setTargetTriangleCount(8192);
+    remesher.setScaling(edgeScaling);
+    remesher.setTargetTriangleCount(targetTriangleCount);
     remesher.setModelType(AutoRemesher::ModelType::Organic);
     remesher.setProgressHandler(reportProgressHandler);
     if (!remesher.remesh())
     {
-        std::cerr << "Remesher failed\n";
+        std::cerr << "Remesh failed\n";
         return -1;
     }
 
-    std::cout << "Remesh finished!\n";
+    std::vector<AutoRemesher::Vector3> const &remeshedVertices = remesher.remeshedVertices();
+    std::vector<std::vector<size_t>> const &remeshedQuads = remesher.remeshedQuads();
+
+    std::ofstream outFile(outFilename, std::ios::out);
+    for (std::vector<AutoRemesher::Vector3>::const_iterator it = remeshedVertices.begin(); it != remeshedVertices.end(); ++it)
+    {
+        outFile << "v " << (*it).x() << " " << (*it).y() << " " << (*it).z() << "\n";
+    }
+    for (std::vector<std::vector<size_t>>::const_iterator it = remeshedQuads.begin(); it != remeshedQuads.end(); ++it)
+    {
+        outFile << "f";
+        for (std::vector<size_t>::const_iterator subIt = (*it).begin(); subIt != (*it).end(); ++subIt)
+        {
+            outFile << " " << (1 + *subIt);
+        }
+        outFile << "\n";
+    }
+    outFile.close();
 
     return 0;
 }
