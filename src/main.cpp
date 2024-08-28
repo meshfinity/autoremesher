@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <unordered_map>
 #include <meshfix.h>
 #include "tiny_obj_loader.h"
 #include <geogram/basic/common.h>
