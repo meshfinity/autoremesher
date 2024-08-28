@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <meshfix.h>
 #include "tiny_obj_loader.h"
 #include <geogram/basic/common.h>
 #include <AutoRemesher/AutoRemesher>
@@ -69,17 +70,18 @@ int main(int argc, char *argv[])
     double edgeScaling = std::stof(argv[3]);
     int targetTriangleCount = std::stoi(argv[4]);
 
-    std::cout << "AutoRemesher\n===\nInput filename: " << inFilename << "\nOutput filename: " << outFilename << "\nEdge scaling: " << edgeScaling << "\nTarget triangle count: " << targetTriangleCount << "\n===\n\n";
+    std::cout << "MeshFix + AutoRemesher (Meshfinity CLI Edition)\n===\nInput filename: " << inFilename << "\nOutput filename: " << outFilename << "\nEdge scaling: " << edgeScaling << "\nTarget triangle count: " << targetTriangleCount << "\n===\n\n";
 
-    GEO::initialize();
-
+    std::cout << "Running MeshFix...\n";
     std::vector<AutoRemesher::Vector3> inVertices;
     std::vector<std::vector<size_t>> inTriangles;
-    if (!loadObj(inFilename, inVertices, inTriangles))
-    {
-        std::cerr << "Unable to load " << inFilename << "\n";
+    if (runMeshfix(inFilename.c_str(), inVertices, inTriangles) != 0) {
+        std::cerr << "MeshFix failed\n";
         return -1;
     }
+    std::cout << "MeshFix done! Now running AutoRemesher...\n";
+
+    GEO::initialize();
 
     AutoRemesher::AutoRemesher remesher(inVertices, inTriangles);
     remesher.setScaling(edgeScaling);
@@ -110,6 +112,8 @@ int main(int argc, char *argv[])
         outFile << "\n";
     }
     outFile.close();
+
+    std::cout << "AutoRemesher done!\n";
 
     return 0;
 }

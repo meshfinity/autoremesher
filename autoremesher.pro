@@ -5,6 +5,7 @@ CONFIG += debug
 CONFIG(release, debug|release) DEFINES += NDEBUG
 DEFINES += AUTO_REMESHER_DEBUG
 DEFINES += QT_MESSAGELOGCONTEXT
+DEFINES += IS64BITPLATFORM
 
 CONFIG += object_parallel_to_source
 
@@ -374,6 +375,47 @@ SOURCES += thirdparty/geogram/geogram-1.7.5/src/lib/exploragram/hexdom/polygon.c
 HEADERS += thirdparty/geogram/geogram-1.7.5/src/lib/exploragram/hexdom/polygon.h
 SOURCES += thirdparty/geogram/geogram-1.7.5/src/lib/exploragram/hexdom/quad_cover.cpp
 HEADERS += thirdparty/geogram/geogram-1.7.5/src/lib/exploragram/hexdom/quad_cover.h
+
+INCLUDEPATH += thirdparty/meshfix-2.1/include/TMesh
+INCLUDEPATH += thirdparty/meshfix-2.1/include/Kernel
+INCLUDEPATH += thirdparty/meshfix-2.1/include/MeshFix
+
+HEADERS += thirdparty/meshfix-2.1/include/Kernel/basics.h
+HEADERS += thirdparty/meshfix-2.1/include/Kernel/coordinates.h
+HEADERS += thirdparty/meshfix-2.1/include/Kernel/graph.h
+HEADERS += thirdparty/meshfix-2.1/include/Kernel/heap.h
+HEADERS += thirdparty/meshfix-2.1/include/Kernel/jqsort.h
+HEADERS += thirdparty/meshfix-2.1/include/Kernel/list.h
+HEADERS += thirdparty/meshfix-2.1/include/Kernel/matrix.h
+HEADERS += thirdparty/meshfix-2.1/include/Kernel/point.h
+HEADERS += thirdparty/meshfix-2.1/include/Kernel/tmesh_kernel.h
+HEADERS += thirdparty/meshfix-2.1/include/TMesh/detectIntersections.h
+HEADERS += thirdparty/meshfix-2.1/include/TMesh/edge.h
+HEADERS += thirdparty/meshfix-2.1/include/TMesh/marchIntersections.h
+HEADERS += thirdparty/meshfix-2.1/include/TMesh/tin.h
+HEADERS += thirdparty/meshfix-2.1/include/TMesh/tmesh.h
+HEADERS += thirdparty/meshfix-2.1/include/TMesh/triangle.h
+HEADERS += thirdparty/meshfix-2.1/include/TMesh/vertex.h
+HEADERS += thirdparty/meshfix-2.1/include/MeshFix/meshfix.h
+SOURCES += thirdparty/meshfix-2.1/src/TMesh/edge.cpp
+SOURCES += thirdparty/meshfix-2.1/src/TMesh/vertex.cpp
+SOURCES += thirdparty/meshfix-2.1/src/TMesh/io.cpp
+SOURCES += thirdparty/meshfix-2.1/src/TMesh/triangle.cpp
+SOURCES += thirdparty/meshfix-2.1/src/TMesh/tin.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Algorithms/detectIntersections.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Algorithms/holeFilling.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Algorithms/marchIntersections.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Algorithms/checkAndRepair.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Kernel/heap.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Kernel/matrix.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Kernel/orientation.c
+SOURCES += thirdparty/meshfix-2.1/src/Kernel/list.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Kernel/coordinates.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Kernel/tmesh.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Kernel/graph.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Kernel/point.cpp
+SOURCES += thirdparty/meshfix-2.1/src/Kernel/jqsort.cpp
+SOURCES += thirdparty/meshfix-2.1/src/MeshFix/meshfix.cpp
 
 INCLUDEPATH += thirdparty/tbb/include
 unix {
