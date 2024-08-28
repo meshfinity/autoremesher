@@ -15,14 +15,14 @@ cd thirdparty/blosc/c-blosc-1.18.1
 mkdir build
 cd build
 arch --x86_64 /usr/local/bin/cmake -D "CMAKE_INSTALL_PREFIX=$INSTALL_DIR" -D "BUILD_SHARED=OFF" -D "BUILD_TESTS=OFF" -D "BUILD_BENCHMARKS=OFF" ..
-arch --x86_64 /usr/local/bin/cmake --build . --config Release
+arch --x86_64 /usr/local/bin/cmake --build . --config Debug
 cd $AUTOREMESHER_BUILD_DIR
 
 cd thirdparty/zlib/zlib-1.2.11
 mkdir build
 cd build
 arch --x86_64 /usr/local/bin/cmake -D "CMAKE_INSTALL_PREFIX=$INSTALL_DIR" ..
-arch --x86_64 /usr/local/bin/cmake --build . --config Release
+arch --x86_64 /usr/local/bin/cmake --build . --config Debug
 cp "$AUTOREMESHER_BUILD_DIR/thirdparty/zlib/zlib-1.2.11/build/zconf.h" "$AUTOREMESHER_BUILD_DIR/thirdparty/zlib/zlib-1.2.11/zconf.h"
 cd $AUTOREMESHER_BUILD_DIR
 
@@ -30,21 +30,21 @@ cd thirdparty/openexr/openexr-2.4.1
 mkdir build
 cd build
 arch --x86_64 /usr/local/bin/cmake -D "CMAKE_INSTALL_PREFIX=$INSTALL_DIR" -D "BUILD_SHARED_LIBS=OFF" -D "PYILMBASE_ENABLE=0" -D "OPENEXR_VIEWERS_ENABLE=0" -D "ZLIB_INCLUDE_DIR=$AUTOREMESHER_BUILD_DIR/thirdparty/zlib/zlib-1.2.11" -D "ZLIB_LIBRARY=$AUTOREMESHER_BUILD_DIR/thirdparty/zlib/zlib-1.2.11/build/libz.a" ..
-arch --x86_64 /usr/local/bin/cmake --build . --config Release
+arch --x86_64 /usr/local/bin/cmake --build . --config Debug
 cd $AUTOREMESHER_BUILD_DIR
 
 cd thirdparty/tbb
 mkdir build2
 cd build2
 arch --x86_64 /usr/local/bin/cmake -D "CMAKE_INSTALL_PREFIX=$INSTALL_DIR" ..
-arch --x86_64 /usr/local/bin/cmake --build . --config Release
+arch --x86_64 /usr/local/bin/cmake --build . --config Debug
 cd $AUTOREMESHER_BUILD_DIR
 
 cd thirdparty/openvdb/openvdb-7.0.0
 mkdir build
 cd build
 arch --x86_64 /usr/local/bin/cmake -D "CMAKE_INSTALL_PREFIX=$INSTALL_DIR" -D "OPENVDB_CORE_SHARED=OFF" -D "OPENVDB_BUILD_VDB_PRINT=OFF" -D "IlmBase_INCLUDE_DIR=$AUTOREMESHER_BUILD_DIR/thirdparty/openexr/openexr-2.4.1" -D "IlmBase_Half_LIBRARY=$AUTOREMESHER_BUILD_DIR/thirdparty/openexr/openexr-2.4.1/build/IlmBase/Half/libHalf-2_4.a" -D "Tbb_INCLUDE_DIR=$AUTOREMESHER_BUILD_DIR/thirdparty/tbb/include" -D "Tbb_tbb_LIBRARY=$AUTOREMESHER_BUILD_DIR/thirdparty/tbb/build2/libtbb_static.a" -D "Tbb_tbbmalloc_LIBRARY=$AUTOREMESHER_BUILD_DIR/thirdparty/tbb/build2/libtbbmalloc_static.a" -D "Tbb_tbbmalloc_proxy_LIBRARY=$AUTOREMESHER_BUILD_DIR/thirdparty/tbb/build2/libtbbmalloc_proxy_static.a" -D "ZLIB_INCLUDE_DIR=$AUTOREMESHER_BUILD_DIR/thirdparty/zlib/zlib-1.2.11" -D "ZLIB_LIBRARY=$AUTOREMESHER_BUILD_DIR/thirdparty/zlib/zlib-1.2.11/build/libz.a" -D "Blosc_INCLUDE_DIR=$AUTOREMESHER_BUILD_DIR/thirdparty/blosc/c-blosc-1.18.1" -D "Blosc_LIBRARY=$AUTOREMESHER_BUILD_DIR/thirdparty/blosc/c-blosc-1.18.1/build/blosc/libblosc.a" -D "BOOST_INCLUDEDIR=/usr/local/opt/boost/include" -D "OPENVDB_DISABLE_BOOST_IMPLICIT_LINKING=ON" -D "CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES=/usr/local/opt/boost/include;$AUTOREMESHER_BUILD_DIR/thirdparty/blosc/c-blosc-1.18.1/blosc;$AUTOREMESHER_BUILD_DIR/thirdparty/zlib/zlib-1.2.11/build" ..
-arch --x86_64 /usr/local/bin/cmake --build . --config Release
+arch --x86_64 /usr/local/bin/cmake --build . --config Debug
 cd $AUTOREMESHER_BUILD_DIR
 
 arch --x86_64 /usr/local/bin/qmake -o Makefile .

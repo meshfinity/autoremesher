@@ -4,6 +4,7 @@
 /moc
 Makefile
 .qmake.stash
+.vscode
 .DS_Store
 
 # Prerequisites
