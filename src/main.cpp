@@ -97,8 +97,23 @@ int main(int argc, char *argv[])
     std::vector<AutoRemesher::Vector3> const &remeshedVertices = remesher.remeshedVertices();
     std::vector<std::vector<size_t>> const &remeshedQuads = remesher.remeshedQuads();
 
+    // remeshedVertices contains lots of unreferenced vertices which don't belong to any face - filter those out here
+    std::vector<AutoRemesher::Vector3> outVertices;
+    std::unordered_map<size_t, size_t> remeshed2OutIdx;
+    for (std::vector<std::vector<size_t>>::const_iterator it = remeshedQuads.begin(); it != remeshedQuads.end(); ++it)
+    {
+        for (std::vector<size_t>::const_iterator subIt = (*it).begin(); subIt != (*it).end(); ++subIt)
+        {
+            if (remeshed2OutIdx.find(*subIt) == remeshed2OutIdx.end()) {
+                outVertices.emplace_back(remeshedVertices[*subIt]);
+                remeshed2OutIdx[*subIt] = outVertices.size() - 1;
+            }
+        }
+    }
+
+    // Now write the actual output file...
     std::ofstream outFile(outFilename, std::ios::out);
-    for (std::vector<AutoRemesher::Vector3>::const_iterator it = remeshedVertices.begin(); it != remeshedVertices.end(); ++it)
+    for (std::vector<AutoRemesher::Vector3>::const_iterator it = outVertices.begin(); it != outVertices.end(); ++it)
     {
         outFile << "v " << (*it).x() << " " << (*it).y() << " " << (*it).z() << "\n";
     }
@@ -107,7 +122,8 @@ int main(int argc, char *argv[])
         outFile << "f";
         for (std::vector<size_t>::const_iterator subIt = (*it).begin(); subIt != (*it).end(); ++subIt)
         {
-            outFile << " " << (1 + *subIt);
+            // ...redirecting the original indices to their reordered (after removing unreferenced) counterparts
+            outFile << " " << (1 + remeshed2OutIdx[*subIt]);
         }
         outFile << "\n";
     }
