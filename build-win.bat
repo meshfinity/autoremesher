@@ -43,6 +43,13 @@ cmake -G "Visual Studio 17 2022" -A x64 -D "OPENVDB_CORE_STATIC=OFF" -D "OPENVDB
 cmake --build . --config Release
 cd %AUTOREMESHER_BUILD_DIR%
 
+dir thirdparty\openvdb\openvdb-7.0.0
+dir thirdparty\openvdb\openvdb-7.0.0\build
+dir thirdparty\openvdb\openvdb-7.0.0\build\openvdb
+dir thirdparty\openvdb\openvdb-7.0.0\build\openvdb\Release
+dir thirdparty\openvdb\openvdb-7.0.0\build\openvdb\Debug
+exit
+
 mkdir %AUTOREMESHER_BUILD_DIR%\Qt
 cd %AUTOREMESHER_BUILD_DIR%\Qt
 curl -O -L https://github.com/miurahr/aqtinstall/releases/download/Continuous/aqt.exe
