@@ -31,7 +31,7 @@ cmake -G "Visual Studio 17 2022" -A x64 ../
 cmake --build . --config Release
 cd %AUTOREMESHER_BUILD_DIR%
 
-curl -O https://archives.boost.io/release/1.66.0/source/boost_1_86_0.zip
+curl -O https://archives.boost.io/release/1.86.0/source/boost_1_86_0.zip
 tar -xf boost_1_86_0.zip
 mkdir %AUTOREMESHER_BUILD_DIR%\Libraries
 echo D | xcopy boost_1_86_0 %AUTOREMESHER_BUILD_DIR%\Libraries\boost_1_86_0 /s /e /q /y
