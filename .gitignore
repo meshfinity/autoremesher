@@ -1,6 +1,8 @@
 /venv
 /autoremesher.app
 /obj
+/obj-debug
+/obj-release
 /moc
 Makefile
 .qmake.stash

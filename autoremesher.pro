@@ -417,6 +417,10 @@ SOURCES += thirdparty/meshfix-2.1/src/Kernel/point.cpp
 SOURCES += thirdparty/meshfix-2.1/src/Kernel/jqsort.cpp
 SOURCES += thirdparty/meshfix-2.1/src/MeshFix/meshfix.cpp
 
+INCLUDEPATH += thirdparty/xatlas/source/xatlas
+HEADERS += thirdparty/xatlas/source/xatlas/xatlas.h
+SOURCES += thirdparty/xatlas/source/xatlas/xatlas.cpp
+
 INCLUDEPATH += thirdparty/tbb/include
 unix {
 	LIBS += -Lthirdparty/tbb/build2 -ltbbmalloc_proxy_static -ltbbmalloc_static -ltbb_static
