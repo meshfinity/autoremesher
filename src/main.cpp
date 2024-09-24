@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_map>
 #include <meshfix.h>
+#include <xatlas.h>
 #include "tiny_obj_loader.h"
 #include <geogram/basic/common.h>
 #include <AutoRemesher/AutoRemesher>
@@ -77,7 +78,8 @@ int main(int argc, char *argv[])
     std::cout << "Running MeshFix...\n";
     std::vector<AutoRemesher::Vector3> inVertices;
     std::vector<std::vector<size_t>> inTriangles;
-    if (runMeshfix(inFilename.c_str(), inVertices, inTriangles) != 0) {
+    if (runMeshfix(inFilename.c_str(), inVertices, inTriangles) != 0)
+    {
         std::cerr << "MeshFix failed\n";
         return -1;
     }
@@ -100,36 +102,81 @@ int main(int argc, char *argv[])
     std::vector<std::vector<size_t>> const &remeshedQuads = remesher.remeshedQuads();
 
     // remeshedVertices contains lots of unreferenced vertices which don't belong to any face - filter those out here
-    std::vector<AutoRemesher::Vector3> outVertices;
+    std::vector<float> outVertices;
+    std::size_t outVerticesCount = 0;
     std::unordered_map<size_t, size_t> remeshed2OutIdx;
     for (std::vector<std::vector<size_t>>::const_iterator it = remeshedQuads.begin(); it != remeshedQuads.end(); ++it)
     {
         for (std::vector<size_t>::const_iterator subIt = (*it).begin(); subIt != (*it).end(); ++subIt)
         {
-            if (remeshed2OutIdx.find(*subIt) == remeshed2OutIdx.end()) {
-                outVertices.emplace_back(remeshedVertices[*subIt]);
-                remeshed2OutIdx[*subIt] = outVertices.size() - 1;
+            if (remeshed2OutIdx.find(*subIt) == remeshed2OutIdx.end())
+            {
+                outVertices.emplace_back(remeshedVertices[*subIt].x());
+                outVertices.emplace_back(remeshedVertices[*subIt].y());
+                outVertices.emplace_back(remeshedVertices[*subIt].z());
+                remeshed2OutIdx[*subIt] = outVerticesCount;
+                ++outVerticesCount;
             }
         }
     }
-
-    // Now write the actual output file...
-    std::ofstream outFile(outFilename, std::ios::out);
-    for (std::vector<AutoRemesher::Vector3>::const_iterator it = outVertices.begin(); it != outVertices.end(); ++it)
-    {
-        outFile << "v " << (*it).x() << " " << (*it).y() << " " << (*it).z() << "\n";
-    }
+    std::vector<std::uint32_t> outIndices;
+    std::vector<std::uint8_t> outFacesNumVertices;
     for (std::vector<std::vector<size_t>>::const_iterator it = remeshedQuads.begin(); it != remeshedQuads.end(); ++it)
     {
-        outFile << "f";
+        std::uint8_t faceNumVertices = 0;
         for (std::vector<size_t>::const_iterator subIt = (*it).begin(); subIt != (*it).end(); ++subIt)
         {
-            // ...redirecting the original indices to their reordered (after removing unreferenced) counterparts
-            outFile << " " << (1 + remeshed2OutIdx[*subIt]);
+            outIndices.emplace_back(remeshed2OutIdx[*subIt]);
+            ++faceNumVertices;
+        }
+        outFacesNumVertices.emplace_back(faceNumVertices);
+    }
+
+    // xatlas
+    xatlas::Atlas *atlas = xatlas::Create();
+    xatlas::MeshDecl meshDecl;
+    meshDecl.vertexCount = outVerticesCount;
+    meshDecl.vertexPositionData = outVertices.data();
+    meshDecl.vertexPositionStride = sizeof(float) * 3;
+    meshDecl.indexCount = outIndices.size();
+    meshDecl.indexData = outIndices.data();
+    meshDecl.indexFormat = xatlas::IndexFormat::UInt32;
+    meshDecl.faceVertexCount = outFacesNumVertices.data();
+    meshDecl.faceCount = outFacesNumVertices.size();
+    xatlas::AddMeshError error = xatlas::AddMesh(atlas, meshDecl, 1);
+    if (error != xatlas::AddMeshError::Success)
+    {
+        std::cerr << "xatlas failed\n";
+        return -1;
+    }
+    xatlas::Generate(atlas);
+    for (std::size_t i = 0; i < atlas->atlasCount; ++i)
+    {
+        std::cerr << "Atlas " << i << ": " << std::roundf(atlas->utilization[i] * 100.0f) << "\% utilization\n";
+    }
+    std::cout << "Atlas resolution: " << atlas->width << "x" << atlas->height << "\n";
+    std::cout << "Total vertices after atlasing: " << atlas->meshes[0].vertexCount << "\n";
+
+    std::ofstream outFile(outFilename, std::ios::out);
+    for (std::size_t i = 0; i < atlas->meshes[0].vertexCount; ++i)
+    {
+        const xatlas::Vertex &vertex = atlas->meshes[0].vertexArray[i];
+        const float *pos = &outVertices[vertex.xref * 3];
+        outFile << "v " << pos[0] << " " << pos[1] << " " << pos[2] << "\n";
+        outFile << "vt " << vertex.uv[0] / static_cast<float>(atlas->width) << " " << vertex.uv[1] / static_cast<float>(atlas->height) << "\n";
+    }
+    std::size_t currentFaceIndex = 0;
+    for (std::size_t i = 0; i < outFacesNumVertices.size(); ++i)
+    {
+        outFile << "f";
+        const std::size_t index = atlas->meshes[0].indexArray[currentFaceIndex];
+        for (std::size_t j = 0; j < outFacesNumVertices[i]; ++j)
+        {
+            outFile << " " << index << "/" << index;
         }
         outFile << "\n";
+        ++currentFaceIndex;
     }
-    outFile.close();
 
     std::cout << "AutoRemesher done!\n";
 
