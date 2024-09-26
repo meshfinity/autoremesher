@@ -165,17 +165,17 @@ int main(int argc, char *argv[])
         outFile << "v " << pos[0] << " " << pos[1] << " " << pos[2] << "\n";
         outFile << "vt " << vertex.uv[0] / static_cast<float>(atlas->width) << " " << vertex.uv[1] / static_cast<float>(atlas->height) << "\n";
     }
-    std::size_t currentFaceIndex = 0;
+    std::size_t totalFaceIndex = 0;
     for (std::size_t i = 0; i < outFacesNumVertices.size(); ++i)
     {
         outFile << "f";
-        const std::size_t index = atlas->meshes[0].indexArray[currentFaceIndex];
         for (std::size_t j = 0; j < outFacesNumVertices[i]; ++j)
         {
+            const std::size_t index = atlas->meshes[0].indexArray[totalFaceIndex] + 1;
             outFile << " " << index << "/" << index;
+            ++totalFaceIndex;
         }
         outFile << "\n";
-        ++currentFaceIndex;
     }
 
     std::cout << "AutoRemesher done!\n";

@@ -9083,18 +9083,18 @@ AddMeshError AddMesh(Atlas *atlas, const MeshDecl &meshDecl, uint32_t meshCountH
 		meshPolygonMapping->triangleToPolygonMap.reserve(meshDecl.faceCount);
 		meshPolygonMapping->triangleToPolygonIndicesMap.reserve(meshDecl.indexCount);
 	}
+	uint32_t firstIndex = 0;
 	const uint32_t kMaxWarnings = 50;
 	uint32_t warningCount = 0;
 	internal::Array<uint32_t> triIndices;
 	internal::Triangulator triangulator;
-	uint32_t allFacesI = 0;
 	for (uint32_t face = 0; face < faceCount; face++) {
 		// Decode face indices.
 		const uint32_t faceVertexCount = meshDecl.faceVertexCount ? (uint32_t)meshDecl.faceVertexCount[face] : 3;
 		uint32_t polygon[UINT8_MAX];
 		for (uint32_t i = 0; i < faceVertexCount; i++) {
 			if (hasIndices) {
-				polygon[i] = DecodeIndex(meshDecl.indexFormat, meshDecl.indexData, meshDecl.indexOffset, allFacesI);
+				polygon[i] = DecodeIndex(meshDecl.indexFormat, meshDecl.indexData, meshDecl.indexOffset, firstIndex + i);
 				// Check if any index is out of range.
 				if (polygon[i] >= meshDecl.vertexCount) {
 					mesh->~Mesh();
@@ -9102,9 +9102,8 @@ AddMeshError AddMesh(Atlas *atlas, const MeshDecl &meshDecl, uint32_t meshCountH
 					return AddMeshError::IndexOutOfRange;
 				}
 			} else {
-				polygon[i] = allFacesI;
+				polygon[i] = face * faceVertexCount + i;
 			}
-			++allFacesI;
 		}
 		// Ignore faces with degenerate or zero length edges.
 		bool ignore = false;
@@ -9193,10 +9192,17 @@ AddMeshError AddMesh(Atlas *atlas, const MeshDecl &meshDecl, uint32_t meshCountH
 			if (meshPolygonMapping)
 				meshPolygonMapping->triangleToPolygonMap.push_back(face);
 		}
+		// For each triangle index, store original index location
 		if (meshPolygonMapping) {
 			for (uint32_t i = 0; i < triIndices.size(); i++)
-				meshPolygonMapping->triangleToPolygonIndicesMap.push_back(triIndices[i]);
+			{
+				uint32_t polygonIndex = 0;
+				for (polygonIndex; polygonIndex < faceVertexCount; polygonIndex++)
+					if (triIndices[i] == polygon[polygonIndex]) break;
+				meshPolygonMapping->triangleToPolygonIndicesMap.push_back(firstIndex+polygonIndex);
+			}
 		}
+		firstIndex += faceVertexCount;
 	}
 	if (warningCount > kMaxWarnings)
 		XA_PRINT("   %u additional warnings truncated\n", warningCount - kMaxWarnings);
