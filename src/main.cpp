@@ -157,12 +157,15 @@ int main(int argc, char *argv[])
     std::cout << "Atlas resolution: " << atlas->width << "x" << atlas->height << "\n";
     std::cout << "Total vertices after atlasing: " << atlas->meshes[0].vertexCount << "\n";
 
+    // OBJ output
     std::ofstream outFile(outFilename, std::ios::out);
+    for (std::size_t i = 0; i < outVerticesCount; ++i)
+    {
+        outFile << "v " << outVertices[i * 3 + 0] << " " << outVertices[i * 3 + 1] << " " << outVertices[i * 3 + 2] << "\n";
+    }
     for (std::size_t i = 0; i < atlas->meshes[0].vertexCount; ++i)
     {
         const xatlas::Vertex &vertex = atlas->meshes[0].vertexArray[i];
-        const float *pos = &outVertices[vertex.xref * 3];
-        outFile << "v " << pos[0] << " " << pos[1] << " " << pos[2] << "\n";
         outFile << "vt " << vertex.uv[0] / static_cast<float>(atlas->width) << " " << vertex.uv[1] / static_cast<float>(atlas->height) << "\n";
     }
     std::size_t totalFaceIndex = 0;
@@ -171,8 +174,9 @@ int main(int argc, char *argv[])
         outFile << "f";
         for (std::size_t j = 0; j < outFacesNumVertices[i]; ++j)
         {
-            const std::size_t index = atlas->meshes[0].indexArray[totalFaceIndex] + 1;
-            outFile << " " << index << "/" << index;
+            const std::size_t index = atlas->meshes[0].indexArray[totalFaceIndex];
+            const xatlas::Vertex &vertex = atlas->meshes[0].vertexArray[index];
+            outFile << " " << (vertex.xref + 1) << "/" << (index + 1);
             ++totalFaceIndex;
         }
         outFile << "\n";
