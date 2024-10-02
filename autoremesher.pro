@@ -114,7 +114,7 @@ HEADERS += src/AutoRemesher/meshseparator.h
 SOURCES += src/AutoRemesher/relativeheight.cpp
 HEADERS += src/AutoRemesher/relativeheight.h
 
-SOURCES += src/tiny_obj_loader.cc
+# SOURCES += src/tiny_obj_loader.cc
 HEADERS += src/tiny_obj_loader.h
 
 INCLUDEPATH += thirdparty/openvdb/openvdb-7.0.0
@@ -420,6 +420,9 @@ SOURCES += thirdparty/meshfix-2.1/src/MeshFix/meshfix.cpp
 INCLUDEPATH += thirdparty/xatlas/source/xatlas
 HEADERS += thirdparty/xatlas/source/xatlas/xatlas.h
 SOURCES += thirdparty/xatlas/source/xatlas/xatlas.cpp
+
+INCLUDEPATH += thirdparty/earcut/include
+HEADERS += thirdparty/earcut/include/mapbox/earcut.hpp
 
 INCLUDEPATH += thirdparty/tbb/include
 unix {
