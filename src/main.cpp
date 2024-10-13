@@ -302,9 +302,9 @@ static void reportProgressHandler(void *tag, float progress)
 
 int main(int argc, char *argv[])
 {
-    if (argc < 5)
+    if (argc != 7)
     {
-        std::cout << "Usage: " << argv[0] << " [input filename] [output filename] [edge scaling (suggested = 4)] [target triangle count (suggested = 65536)]\n";
+        std::cout << "Usage: " << argv[0] << " [input filename] [output filename] [edge scaling (0 for no AutoRemesher; suggested = 2)] [target triangle count (suggested = 65536)] [texture resolution (suggested = 1024)] [texture padding (suggested = 4)]\n";
         return -1;
     }
 
@@ -312,6 +312,8 @@ int main(int argc, char *argv[])
     std::string outFilename(argv[2]);
     double edgeScaling = std::stof(argv[3]);
     int targetTriangleCount = std::stoi(argv[4]);
+    int textureResolution = std::stoi(argv[5]);
+    int texturePadding = std::stoi(argv[6]);
 
     std::cout << "MeshFix + AutoRemesher (Meshfinity CLI Edition)\n===\nInput filename: " << inFilename << "\nOutput filename: " << outFilename << "\nEdge scaling: " << edgeScaling << "\nTarget triangle count: " << targetTriangleCount << "\n===\n\n";
 
@@ -323,23 +325,37 @@ int main(int argc, char *argv[])
         std::cerr << "MeshFix failed\n";
         return -1;
     }
-    std::cout << "MeshFix done! Now running AutoRemesher...\n";
+    std::cout << "MeshFix done!\n";
 
     GEO::initialize();
 
-    AutoRemesher::AutoRemesher remesher(inVertices, inTriangles);
-    remesher.setScaling(edgeScaling);
-    remesher.setTargetTriangleCount(targetTriangleCount);
-    remesher.setModelType(AutoRemesher::ModelType::Organic);
-    remesher.setProgressHandler(reportProgressHandler);
-    if (!remesher.remesh())
+    std::vector<AutoRemesher::Vector3> remeshedVertices;
+    std::vector<std::vector<size_t>> remeshedQuads;
+    if (edgeScaling > 0.0)
     {
-        std::cerr << "Remesh failed\n";
-        return -1;
-    }
+        std::cout << "Running AutoRemesher...\n";
 
-    std::vector<AutoRemesher::Vector3> const &remeshedVertices = remesher.remeshedVertices();
-    std::vector<std::vector<size_t>> const &remeshedQuads = remesher.remeshedQuads();
+        AutoRemesher::AutoRemesher remesher(inVertices, inTriangles);
+        remesher.setScaling(edgeScaling);
+        remesher.setTargetTriangleCount(targetTriangleCount);
+        remesher.setModelType(AutoRemesher::ModelType::Organic);
+        remesher.setProgressHandler(reportProgressHandler);
+        if (!remesher.remesh())
+        {
+            std::cerr << "Remesh failed\n";
+            return -1;
+        }
+
+        remeshedVertices = remesher.remeshedVertices();
+        remeshedQuads = remesher.remeshedQuads();
+    }
+    else
+    {
+        std::cout << "Skipping AutoRemesher...\n";
+
+        remeshedVertices = inVertices;
+        remeshedQuads = inTriangles;
+    }
 
     // remeshedVertices contains lots of unreferenced vertices which don't belong to any face - filter those out here
     std::vector<float> outVertices;
@@ -404,6 +420,8 @@ int main(int argc, char *argv[])
         }
     }
 
+    std::cout << "Running xatlas\n";
+
     xatlas::Atlas *atlas = xatlas::Create();
     xatlas::MeshDecl meshDecl;
     meshDecl.vertexCount = outVerticesCount;
@@ -418,6 +436,9 @@ int main(int argc, char *argv[])
         std::cerr << "xatlas failed\n";
         return -1;
     }
+    xatlas::PackOptions packOptions;
+    packOptions.padding = texturePadding;
+    packOptions.resolution = textureResolution;
     xatlas::Generate(atlas);
     for (std::size_t i = 0; i < atlas->atlasCount; ++i)
     {
