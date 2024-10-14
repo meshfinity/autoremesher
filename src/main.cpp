@@ -305,9 +305,9 @@ static void reportProgressHandler(void *tag, float progress)
 
 int main(int argc, char *argv[])
 {
-    if (argc != 7)
+    if (argc != 8)
     {
-        std::cout << "Usage: " << argv[0] << " [input filename] [output filename] [edge scaling (0 for no AutoRemesher; suggested = 2)] [target triangle count (suggested = 65536)] [texture resolution (suggested = 1024)] [texture padding (suggested = 4)]\n";
+        std::cout << "Usage: " << argv[0] << " [input filename] [output filename] [edge scaling (0 for no AutoRemesher; suggested = 2)] [target triangle count (suggested = 65536)] [texture resolution (suggested = 1024)] [texture padding (suggested = 4)] [brute force texture packing (0 = off, 1 = on; suggested = 0)]\n";
         return -1;
     }
 
@@ -317,6 +317,13 @@ int main(int argc, char *argv[])
     int targetTriangleCount = std::stoi(argv[4]);
     int textureResolution = std::stoi(argv[5]);
     int texturePadding = std::stoi(argv[6]);
+    int bftpInt = std::stoi(argv[7]);
+    if (bftpInt != 0 && bftpInt != 1)
+    {
+        std::cerr << "Brute force texture packing must be 0 or 1\n";
+        return -1;
+    }
+    bool bruteForceTexturePacking = std::stoi(argv[7]) == 0 ? false : true;
 
     std::cout << "MeshFix + AutoRemesher (Meshfinity CLI Edition)\n===\nInput filename: " << inFilename << "\nOutput filename: " << outFilename << "\nEdge scaling: " << edgeScaling << "\nTarget triangle count: " << targetTriangleCount << "\n===\n\n";
 
@@ -465,7 +472,9 @@ int main(int argc, char *argv[])
     xatlas::PackOptions packOptions;
     packOptions.padding = texturePadding;
     packOptions.resolution = textureResolution;
-    xatlas::Generate(atlas);
+    packOptions.blockAlign = true;
+    packOptions.bruteForce = bruteForceTexturePacking;
+    xatlas::Generate(atlas, xatlas::ChartOptions(), packOptions);
     for (std::size_t i = 0; i < atlas->atlasCount; ++i)
     {
         std::cerr << "Atlas " << i << ": " << std::roundf(atlas->utilization[i] * 100.0f) << "\% utilization\n";
