@@ -8,6 +8,9 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
 #include <geogram/basic/common.h>
+#include <igl/per_vertex_normals.h>
+#include <igl/orientable_patches.h>
+#include <igl/bfs_orient.h>
 #include <AutoRemesher/AutoRemesher>
 #include <AutoRemesher/Vector3>
 
@@ -348,6 +351,8 @@ int main(int argc, char *argv[])
 
         remeshedVertices = remesher.remeshedVertices();
         remeshedQuads = remesher.remeshedQuads();
+
+        std::cout << "AutoRemesher done!\n";
     }
     else
     {
@@ -420,8 +425,29 @@ int main(int argc, char *argv[])
         }
     }
 
-    std::cout << "Running xatlas\n";
+    // re-orient and normals
+    std::cout << "Computing normals...\n";
+    Eigen::MatrixXd iglV(outVerticesCount, 3);
+    Eigen::MatrixXd iglF(xatlasInputTris.size() / 3, 3);
+    for (std::size_t i = 0; i < outVerticesCount; ++i)
+    {
+        iglV(i, 0) = outVertices[i * 3 + 0];
+        iglV(i, 1) = outVertices[i * 3 + 1];
+        iglV(i, 2) = outVertices[i * 3 + 2];
+    }
+    for (std::size_t i = 0; i < xatlasInputTris.size() / 3; ++i)
+    {
+        iglF(i, 0) = xatlasInputTris[i * 3 + 0];
+        iglF(i, 1) = xatlasInputTris[i * 3 + 1];
+        iglF(i, 2) = xatlasInputTris[i * 3 + 2];
+    }
+    Eigen::MatrixXd iglFF, iglC;
+    igl::bfs_orient(iglF, iglFF, iglC);
+    Eigen::MatrixXd iglN;
+    igl::per_vertex_normals(iglV, iglFF, iglN);
+    std::cout << "Normals done!\n";
 
+    std::cout << "Running xatlas...\n";
     xatlas::Atlas *atlas = xatlas::Create();
     xatlas::MeshDecl meshDecl;
     meshDecl.vertexCount = outVerticesCount;
@@ -446,6 +472,9 @@ int main(int argc, char *argv[])
     }
     std::cout << "Atlas resolution: " << atlas->width << "x" << atlas->height << "\n";
     std::cout << "Total vertices after atlasing: " << atlas->meshes[0].vertexCount << "\n";
+    std::cout << "xatlas done!\n";
+
+    std::cout << "Exporting OBJ...\n";
 
     // OBJ Output: Vertices
     std::ofstream outFile(outFilename, std::ios::out);
@@ -457,6 +486,10 @@ int main(int argc, char *argv[])
     {
         const xatlas::Vertex &vertex = atlas->meshes[0].vertexArray[i];
         outFile << "vt " << vertex.uv[0] / static_cast<float>(atlas->width) << " " << vertex.uv[1] / static_cast<float>(atlas->height) << "\n";
+    }
+    for (size_t i = 0; i < outVerticesCount; ++i)
+    {
+        outFile << "vn " << std::to_string(iglN(i, 0)) << " " << std::to_string(iglN(i, 1)) << " " << std::to_string(iglN(i, 2)) << "\n";
     }
 
     // OBJ Output: Polygons
@@ -488,7 +521,7 @@ int main(int argc, char *argv[])
             {
                 std::size_t oldIdx = item.original[i];
                 const std::size_t newIdx = old2New[item.original[i]];
-                outFile << " " << (oldIdx + 1) << "/" << (newIdx + 1);
+                outFile << " " << (oldIdx + 1) << "/" << (newIdx + 1) << "/" << (oldIdx + 1);
             }
             outFile << "\n";
 
@@ -516,7 +549,7 @@ int main(int argc, char *argv[])
                 const std::size_t texIdx = atlas->meshes[0].indexArray[i + j];
                 const xatlas::Vertex &xatlasVertex = atlas->meshes[0].vertexArray[texIdx];
                 std::size_t posIdx = xatlasVertex.xref;
-                outFile << " " << (posIdx + 1) << "/" << (texIdx + 1);
+                outFile << " " << (posIdx + 1) << "/" << (texIdx + 1) << "/" << (posIdx + 1);
             }
         }
         if (wrote)
@@ -524,8 +557,7 @@ int main(int argc, char *argv[])
             outFile << "\n";
         }
     }
-
-    std::cout << "AutoRemesher done!\n";
+    std::cout << "Export OBJ done!\n";
 
     return 0;
 }
